@@ -1,0 +1,202 @@
+.instanceChild {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0%;
+  right: 0%;
+  bottom: 0%;
+  left: 0%;
+  background-color: #d9d9d9;
+}
+.instanceItem {
+  position: absolute;
+  height: 52.63%;
+  width: 13.95%;
+  top: 23.68%;
+  right: 77.91%;
+  bottom: 23.68%;
+  left: 8.14%;
+  border-radius: 50%;
+  background-color: #a1a1a1;
+}
+.instanceInner {
+  position: absolute;
+  height: 26.32%;
+  width: 9.53%;
+  top: 36.84%;
+  right: 25.58%;
+  bottom: 36.84%;
+  left: 64.88%;
+  background-color: #a1a1a1;
+}
+.rectangleDiv {
+  position: absolute;
+  height: 26.32%;
+  width: 9.53%;
+  top: 36.84%;
+  right: 8.14%;
+  bottom: 36.84%;
+  left: 82.33%;
+  background-color: #a1a1a1;
+}
+.rectangleParent {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 430px;
+  height: 114px;
+}
+.footer {
+  position: absolute;
+  bottom: 0px;
+  left: calc(50% - 215px);
+  width: 430px;
+  height: 94px;
+}
+.projectPopupChild {
+  position: absolute;
+  top: 170px;
+  left: 27px;
+  background-color: #d9d9d9;
+  width: 368px;
+  height: 694px;
+}
+.projectPopupItem {
+  position: absolute;
+  height: 6.55%;
+  width: 18.6%;
+  top: 17.84%;
+  right: 73.26%;
+  bottom: 75.61%;
+  left: 8.14%;
+  border-radius: 50%;
+  background-color: #a1a1a1;
+}
+.projectPopupInner {
+  position: absolute;
+  top: 331px;
+  left: 27px;
+  background-color: #a1a1a1;
+  width: 368px;
+  height: 206px;
+}
+.projectPopupChild1 {
+  position: absolute;
+  top: 426px;
+  left: 346px;
+  background-color: #d9d9d9;
+  width: 39px;
+  height: 10px;
+}
+.projectPopupChild2 {
+  position: absolute;
+  top: 253px;
+  left: 131px;
+  background-color: #a1a1a1;
+  width: 114px;
+  height: 10px;
+}
+.projectPopupChild3 {
+  position: absolute;
+  top: 272px;
+  left: 164px;
+  background-color: #a1a1a1;
+  width: 48px;
+  height: 10px;
+}
+.groupChild {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: #a1a1a1;
+  width: 11px;
+  height: 10px;
+}
+.groupItem {
+  position: absolute;
+  top: 0px;
+  left: 16px;
+  background-color: #a1a1a1;
+  width: 11px;
+  height: 10px;
+}
+.groupInner {
+  position: absolute;
+  top: 0px;
+  left: 32px;
+  background-color: #a1a1a1;
+  width: 11px;
+  height: 10px;
+}
+.rectangleGroup {
+  position: absolute;
+  top: 310px;
+  left: 54px;
+  width: 43px;
+  height: 10px;
+}
+.groupChild1 {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: #a1a1a1;
+  width: 289px;
+  height: 19.8px;
+}
+.groupChild2 {
+  position: absolute;
+  top: 30.21px;
+  left: 0px;
+  background-color: #a1a1a1;
+  width: 289px;
+  height: 19.8px;
+}
+.rectangleContainer {
+  position: absolute;
+  top: 586px;
+  left: 70px;
+  width: 289px;
+  height: 50px;
+}
+.groupDiv {
+  position: absolute;
+  top: 646px;
+  left: 70px;
+  width: 289px;
+  height: 50px;
+}
+.ellipseDiv {
+  position: absolute;
+  top: 812px;
+  left: 35px;
+  border-radius: 50%;
+  background-color: #a1a1a1;
+  width: 30px;
+  height: 30px;
+}
+.projectPopupChild4 {
+  position: absolute;
+  top: 812px;
+  left: 86px;
+  border-radius: 50%;
+  background-color: #a1a1a1;
+  width: 30px;
+  height: 30px;
+}
+.projectPopupChild5 {
+  position: absolute;
+  top: 812px;
+  left: 137px;
+  border-radius: 50%;
+  background-color: #a1a1a1;
+  width: 30px;
+  height: 30px;
+}
+.projectPopup {
+  width: 100%;
+  position: relative;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  background-color: #8c8c8c;
+  height: 1222px;
+  overflow: hidden;
+}
