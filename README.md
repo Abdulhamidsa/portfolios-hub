@@ -12,7 +12,7 @@
  git clone https://github.com/your-username/portfolio-hub.git
 ```
 
-# Installing dependencies and running the application:
+## Installing dependencies and running the application:
 
 1.  Backend
 
@@ -36,6 +36,6 @@ npm install
 npm run dev
 ```
 
-# Accessing the Applications
+## Accessing the Applications
 
-## - **Backend API:** The backend API is accessible at [http://localhost:8080](http://localhost:8080)
+### - **Backend API:** The backend API is accessible at [http://localhost:8080](http://localhost:8080)
