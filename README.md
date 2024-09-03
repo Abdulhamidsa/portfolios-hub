@@ -49,3 +49,4 @@ Todo
 - [ ] Seeding the data will require a deep understanding of the data structure
 - [ ] what other models do we need to add to the backend
 - [ ] add typescript to the backend
+- [ ] update dependencies to latest version
