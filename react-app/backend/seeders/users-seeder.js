@@ -1,7 +1,6 @@
 import { User } from "../src/models/user.model.js";
 import { faker } from "@faker-js/faker";
 import { connect } from "../util/db.js";
-
 const seed = async () => {
   await connect();
   await User.deleteMany({});
@@ -15,4 +14,5 @@ const seed = async () => {
   console.log("Data Seeded!");
   process.exit(0);
 };
+
 seed();

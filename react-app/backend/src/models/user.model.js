@@ -1,77 +1,120 @@
 import mongoose from "mongoose";
 const { Schema, SchemaTypes, model } = mongoose;
-import bcrypt from "bcryptjs";
-import md5 from "md5";
-import { SECRETS } from "../../util/config.js";
+
+// predefinedData
+const predefinedLinks = ["cv", "social media", "pdf cv"];
+const predefinedProfessions = [
+  "web development",
+  "frontend development",
+  "backend development",
+  "full stack development",
+  "UI/UX designer",
+  "graphic designer",
+  "web designer",
+  "product designer",
+  "motion graphics",
+  "visual designer",
+  "creative director",
+  "digital marketer",
+];
+const userCredentialSchema = new Schema({
+  firstName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  username: String,
+  email: String,
+  mobile: {
+    type: String,
+    unique: true,
+  },
+  dateOfBirth: {
+    type: Date,
+    required: true,
+  },
+  password: {
+    type: String,
+    trim: true, // removes whitespaces from beginning and end
+  },
+});
+const userPeronalInfoSchema = new Schema({
+  photo: {
+    type: String,
+    default: `https://avatars.dicebear.com/api/bottts/tazim.svg`,
+  },
+  bio: {
+    type: String,
+  },
+  profession: {
+    type: String,
+    required: true,
+    enum: predefinedProfessions,
+  },
+  country: {
+    type: String,
+    required: true,
+  },
+  links: [
+    {
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+        enum: predefinedLinks,
+      },
+    },
+    {
+      url: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+    },
+  ],
+});
 
 const UserSchema = new Schema(
   {
-    name: String,
-    email: String,
-    mobile: {
-      type: String,
-      unique: true,
-    },
-    password: {
-      type: String,
-      trim: true,
-    },
+    _id: SchemaTypes.ObjectId,
+    // friendlyId: {
+    //   type: String,
+    //   unique: true,
+    // },
+    userCredentialSchema,
+    userPeronalInfoSchema,
     userType: {
       type: String,
       default: "user",
     },
+    // if user is blocked or not
     approved: {
       type: Boolean,
-      default: "false",
+      default: true,
     },
-    photo: {
-      type: String,
-      default: `https://avatars.dicebear.com/api/bottts/tazim.svg`,
-    },
-    loginAttempts: {
-      type: Number,
-      default: 0,
-    },
+    // active status for last seen and online status
     active: {
       type: Boolean,
       default: true,
     },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    deletedAt: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );
-
-UserSchema.pre("save", async function (next) {
-  try {
-    const hash = await bcrypt.hash(this.password, 8);
-    this.password = hash;
-    next();
-  } catch (err) {
-    next(err);
-  }
-});
-
-UserSchema.pre(
-  "findOneAndDelete",
-  { document: true, query: true },
-  async function (next) {
-    const userID = this.getFilter()["_id"];
-    console.log("DELETING USER", userID);
-
-    next();
-  }
-);
-
-UserSchema.methods.checkPassword = function (password) {
-  const passwordHash = this.password;
-  return new Promise((resolve, reject) => {
-    bcrypt.compare(password, passwordHash, (err, same) => {
-      if (err) {
-        return reject(err);
-      }
-
-      resolve(same);
-    });
-  });
-};
 
 export const User = model("users", UserSchema);
