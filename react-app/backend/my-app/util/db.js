@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 //     useCreateIndex: true,
 //   });
 // };
-const MONGO_CONNECTION_STRING = "mongodb+srv://aboood:UNBFqjTpLgeUMQkl@cluster0.bn3dcrh.mongodb.net/internship?retryWrites=true&w=majority";
+const MONGO_CONNECTION_STRING = `mongodb+srv://aboood:UNBFqjTpLgeUMQkl@cluster0.bn3dcrh.mongodb.net/internship?retryWrites=true&w=majority `;
 export const connect = (url = MONGO_CONNECTION_STRING) => {
   return mongoose.connect(url, {
     useNewUrlParser: true,
@@ -14,3 +14,4 @@ export const connect = (url = MONGO_CONNECTION_STRING) => {
     useCreateIndex: true,
   });
 };
+connect();

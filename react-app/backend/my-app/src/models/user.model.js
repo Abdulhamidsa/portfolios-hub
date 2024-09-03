@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 const { Schema, SchemaTypes, model } = mongoose;
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import md5 from "md5";
 import { SECRETS } from "../../util/config.js";
 
