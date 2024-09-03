@@ -38,3 +38,14 @@ npm run dev
 ## Accessing the Applications
 
 - **Backend API:** The backend API is accessible at [http://localhost:8080](http://localhost:8080)
+
+
+
+---------------------------------------
+Todo 
+
+- [ ] how do we structure the routes (AA will try to come up with a structure)
+- [ ] add validation layer to all routes (DC will provide a example of how to do this)
+- [ ] Seeding the data will require a deep understanding of the data structure
+- [ ] what other models do we need to add to the backend
+- [ ] add typescript to the backend
