@@ -9,7 +9,7 @@ const UserSchema = new Schema(
     name: String,
     email: String,
     mobile: {
-      type: Number,
+      type: String,
       unique: true,
     },
     password: {
@@ -50,12 +50,16 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-UserSchema.pre("findOneAndDelete", { document: true, query: true }, async function (next) {
-  const userID = this.getFilter()["_id"];
-  console.log("DELETING USER", userID);
+UserSchema.pre(
+  "findOneAndDelete",
+  { document: true, query: true },
+  async function (next) {
+    const userID = this.getFilter()["_id"];
+    console.log("DELETING USER", userID);
 
-  next();
-});
+    next();
+  }
+);
 
 UserSchema.methods.checkPassword = function (password) {
   const passwordHash = this.password;
