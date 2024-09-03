@@ -50,3 +50,9 @@ Todo
 - [ ] what other models do we need to add to the backend
 - [ ] add typescript to the backend
 - [ ] update dependencies to latest version
+- [ ] setup .env file with NODE_ENV, PORT, MONGO_URI, JWT_SECRET - currently its using a SECRETS file
+- [ ] Evaluate the need for expressListRoutes
+- [ ] user PORT 4000 for local development - for the backend instead of 8080
+- [ ] delete and evaluate the need for PRE hooks in mongoose models
+- [ ] eveluate the need for --es-module-specifier-resolution=node in the package.json file
+- [ ] general error handler - consider adding sentry
