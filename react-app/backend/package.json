@@ -35,14 +35,24 @@
     "mongoose": "^5.13.22",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "multer-storage-cloudinary": "^4.0.0"
+    "multer-storage-cloudinary": "^4.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "eslint": "^6.0.0",
-    "nodemon": "^2.0.7",
-    "prettier": "^2.3.0"
+    "prettier": "^3.3.3",
+    "nodemon": "^2.0.7"
   },
+
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 4,
+    "semi": false,
+    "singleQuote": true,
+    "printWidth": 120
+  },
+
   "keywords": [
     "node",
     "node.js",
