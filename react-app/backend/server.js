@@ -15,7 +15,7 @@ import UserRouter from "./src/routes/user.router.js";
 config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 
 export const userModel = (req, res, next) => {
   req.model = User;
