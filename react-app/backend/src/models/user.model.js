@@ -17,6 +17,7 @@ const predefinedProfessions = [
     'digital marketer',
 ]
 const userCredentialSchema = new Schema({
+    _id: 0,
     firstName: {
         type: String,
         required: true,
@@ -27,7 +28,11 @@ const userCredentialSchema = new Schema({
         required: true,
         trim: true,
     },
-    username: String,
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     email: String,
     mobile: {
         type: String,
@@ -43,6 +48,7 @@ const userCredentialSchema = new Schema({
     },
 })
 const userPeronalInfoSchema = new Schema({
+    _id: 0,
     photo: {
         type: String,
         default: `https://avatars.dicebear.com/api/bottts/tazim.svg`,
@@ -85,8 +91,8 @@ const UserSchema = new Schema(
             type: String,
             unique: true,
         },
-        userCredentialSchema,
-        userPeronalInfoSchema,
+        credentials: userCredentialSchema,
+        personalInfo: userPeronalInfoSchema,
         userType: {
             type: String,
             default: 'user',

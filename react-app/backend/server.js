@@ -4,6 +4,8 @@ import morgan from 'morgan'
 import { config } from 'dotenv'
 import cors from 'cors'
 import z from 'zod'
+import rateLimit from 'express-rate-limit'
+import { validZod } from './util/validation.js'
 import expressListRoutes from 'express-list-routes'
 import { connect } from './util/db.js'
 import { SECRETS } from './util/config.js'
@@ -22,9 +24,6 @@ export const userModel = (req, res, next) => {
     req.model = User
     next()
 }
-
-import rateLimit from 'express-rate-limit'
-import { validZod } from './util/validation.js'
 
 const limiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
