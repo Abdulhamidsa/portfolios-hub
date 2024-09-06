@@ -16,7 +16,7 @@ import UserRouter from './src/routes/user.router.js'
 config()
 
 const app = express()
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT
 
 export const userModel = (req, res, next) => {
     req.model = User
@@ -102,7 +102,7 @@ export const start = async () => {
     try {
         connect()
         app.listen(PORT, () => {
-            if (SECRETS.node_env === 'development') {
+            if (SECRETS.node_env === process.env.NODE_ENV) {
                 expressListRoutes(app)
             }
             console.log(`REST API on http://localhost:${PORT}/`)
