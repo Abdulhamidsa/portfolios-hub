@@ -12,7 +12,7 @@ const handleClick = () => {
 const Navbar: React.FC = () => {
   return (
     <>
-      <Button onClick={handleClick}>hello</Button>
+      <Button onClick={handleClick}></Button>
     </>
   );
 };

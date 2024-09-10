@@ -28,5 +28,12 @@ const projectsSchema = new Schema({
         type: [String],
         default: 0,
     },
+    tags: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'tags',
+        },
+    ],
 })
-export const Projects = model('projects', projectsSchema)
+const Projects = model('projects', projectsSchema)
+export { Projects }
