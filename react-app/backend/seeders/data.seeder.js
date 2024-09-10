@@ -1,7 +1,8 @@
 import { User } from '../src/models/user.model.js'
 import { faker } from '@faker-js/faker'
 import { connect } from '../util/db.js'
-import { Projects } from '../src/models/projects.model.js'
+// import { Projects } from '../src/models/projects.model.js'
+
 import mongoose from 'mongoose'
 const predefinedLinks = ['cv', 'social media', 'pdf cv']
 const predefinedProfessions = [
@@ -67,7 +68,7 @@ const generateTagsData = (count) => {
 
 const deleteExistingData = async () => {
     try {
-        await Promise.all([User.deleteMany({}), Projects.deleteMany({})])
+        await Promise.all([User.deleteMany({})])
         console.log('data deleted')
     } catch (error) {
         console.error('failed deleting data:', error)
@@ -78,11 +79,11 @@ const insertData = async () => {
     try {
         const users = generateUserData(10)
         await User.insertMany(users)
-        const allUsers = await User.find({}, '_id').exec()
-        const userId = allUsers.map((user) => user._id.toString())
+        // const allUsers = await User.find({}, '_id').exec()
+        // const userId = allUsers.map((user) => user._id.toString())
 
-        const projects = generateProjectsData(20, userId)
-        await Projects.insertMany(projects)
+        // const projects = generateProjectsData(20, userId)
+        // await Projects.insertMany(projects)
 
         console.log('data inserted')
     } catch (error) {
@@ -92,7 +93,7 @@ const insertData = async () => {
 }
 const seed = async () => {
     try {
-        await connect()
+        connect()
         await Promise.all([deleteExistingData(), insertData()])
         console.log('data seeded')
         process.exit(0)

@@ -1,7 +1,6 @@
 import express, { urlencoded, json } from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import { config } from 'dotenv'
 import cors from 'cors'
 import z from 'zod'
 import rateLimit from 'express-rate-limit'
@@ -15,11 +14,7 @@ import { signup, signin, requiresLogin, adminSignin, adminSignUp, requiresAdminL
 import { User } from './src/models/user.model.js'
 import UserRouter from './src/routes/user.router.js'
 
-config()
-
 const app = express()
-const PORT = process.env.PORT
-
 export const userModel = (req, res, next) => {
     req.model = User
     next()
@@ -43,7 +38,6 @@ app.use((req, res, next) => {
     next()
 })
 app.use(helmet.hidePoweredBy())
-
 app.use(json())
 app.use(urlencoded({ extended: true }))
 app.use(cors())
@@ -99,12 +93,12 @@ app.get('/test-validation/:testid', validZod(schema, 'params'), (req, res, next)
 
 export const start = async () => {
     try {
-        connect()
-        app.listen(PORT, () => {
+        await connect()
+        app.listen(process.env.PORT, () => {
             if (SECRETS.node_env === process.env.NODE_ENV) {
                 expressListRoutes(app)
             }
-            console.log(`REST API on http://localhost:${PORT}/`)
+            console.log(`REST API on http://localhost:${process.env.PORT}/`)
         })
     } catch (e) {
         console.error(e)
