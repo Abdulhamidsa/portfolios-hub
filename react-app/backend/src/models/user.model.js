@@ -49,7 +49,7 @@ const userCredentialSchema = new Schema({
 })
 const userPeronalInfoSchema = new Schema({
     _id: 0,
-    photo: {
+    profilePicture: {
         type: String,
         default: `https://avatars.dicebear.com/api/bottts/tazim.svg`,
     },
@@ -73,8 +73,6 @@ const userPeronalInfoSchema = new Schema({
                 trim: true,
                 enum: predefinedLinks,
             },
-        },
-        {
             url: {
                 type: String,
                 required: true,
@@ -83,7 +81,6 @@ const userPeronalInfoSchema = new Schema({
         },
     ],
 })
-
 const UserSchema = new Schema(
     {
         _id: SchemaTypes.ObjectId,
