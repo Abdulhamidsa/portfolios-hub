@@ -1,8 +1,9 @@
 import mongoose from 'mongoose'
 import { faker } from '@faker-js/faker'
-import { User } from '../src/models/user.model.js' // Adjust the import path as needed
-import { Projects } from '../src/models/projects.model.js' // Adjust the import path as needed
-import { Tag } from '../src/models/tags.model.js' // Adjust the import path as needed
+import { User } from '../src/models/user.model.js'
+import { Project } from '../src/models/project.model.js'
+import { Tag } from '../src/models/tags.model.js'
+import { Credentials } from '../src/models/auth.model.js'
 import { connect } from '../util/db.js'
 
 const predefinedLinks = ['cv', 'social media', 'pdf cv']
@@ -12,13 +13,13 @@ const predefinedProfessions = [
     'backend development',
     'full stack development',
     'UI/UX designer',
-    'graphic designer',
+    'graphic design',
     'web designer',
     'product designer',
     'motion graphics',
     'visual designer',
     'creative director',
-    'digital marketer',
+    'digital marketing',
 ]
 const predefinedTags = [
     'webDev',
@@ -47,15 +48,6 @@ const predefinedTags = [
 
 const generateUserData = (count) => {
     return Array.from({ length: count }).map(() => ({
-        credentials: {
-            firstName: faker.person.firstName(),
-            lastName: faker.person.lastName(),
-            username: faker.internet.userName(),
-            email: faker.internet.email(),
-            mobile: faker.phone.number(),
-            dateOfBirth: faker.date.birthdate(),
-            password: faker.internet.password(),
-        },
         personalInfo: {
             profilePicture: faker.image.avatar(),
             bio: faker.lorem.sentence(),
@@ -76,14 +68,26 @@ const generateUserData = (count) => {
         updatedAt: faker.date.recent(),
     }))
 }
+const generateUserCredentialData = (count, userId) => {
+    return Array.from({ length: count }).map(() => ({
+        userId: userId,
+        firstName: faker.person.firstName(),
+        lastName: faker.person.lastName(),
+        username: faker.internet.userName(),
+        email: faker.internet.email(),
+        mobile: faker.phone.number(),
+        dateOfBirth: faker.date.birthdate(),
+        password: faker.internet.password(),
+    }))
+}
 
 const generateProjectsData = (count, userIds, tagIds) => {
     return Array.from({ length: count }).map(() => {
-        const numTags = faker.datatype.number({ min: 1, max: 5 })
+        const numTags = faker.number.int({ min: 1, max: 5 })
         const projectTags = Array.from({ length: numTags }).map(
             () => new mongoose.Types.ObjectId(faker.helpers.arrayElement(tagIds))
         )
-        const numImages = faker.datatype.number({ min: 1, max: 5 })
+        const numImages = faker.number.int({ min: 1, max: 5 })
         const projectImages = Array.from({ length: numImages }).map(() => faker.image.url())
         return {
             userId: new mongoose.Types.ObjectId(faker.helpers.arrayElement(userIds)),
@@ -104,7 +108,7 @@ const generateTagsData = (count) => {
 
 const deleteExistingData = async () => {
     try {
-        await Promise.all([User.deleteMany({}), Projects.deleteMany({}), Tag.deleteMany({})])
+        await Promise.all([User.deleteMany({}), Project.deleteMany({}), Tag.deleteMany({})])
         console.log('Existing data deleted successfully')
     } catch (error) {
         console.error('Failed to delete existing data:', error)
@@ -118,12 +122,19 @@ const insertData = async () => {
         await Tag.insertMany(tags)
         const allTags = await Tag.find({}, '_id').exec()
         const tagIds = allTags.map((tag) => tag._id.toString())
+
         const users = generateUserData(10)
         await User.insertMany(users)
         const allUsers = await User.find({}, '_id').exec()
         const userIds = allUsers.map((user) => user._id.toString())
+
+        // Generate credentials for each user
+        // const credentials = userIds.map((userId) => generateUserCredentialData(userId))
+        // await Credentials.insertMany(credentials)
+
         const projects = generateProjectsData(20, userIds, tagIds)
-        await Projects.insertMany(projects)
+        await Project.insertMany(projects)
+
         console.log('Data inserted successfully')
     } catch (error) {
         console.error('Failed to insert data:', error)

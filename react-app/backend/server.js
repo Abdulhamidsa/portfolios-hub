@@ -13,6 +13,7 @@ import { forgotPassword } from './src/controllers/user.controllers.js'
 import { signup, signin, requiresLogin, adminSignin, adminSignUp, requiresAdminLogin } from './util/auth.js'
 import { User } from './src/models/user.model.js'
 import UserRouter from './src/routes/user.router.js'
+import ProjectRouter from './src/routes/project/project.route.js'
 
 const app = express()
 export const userModel = (req, res, next) => {
@@ -56,7 +57,7 @@ app.post('/register', userModel, signup)
 app.post('/login', userModel, signin)
 
 //user crud API'S
-app.use('/api/user', userModel, requiresLogin, UserRouter)
+app.use('/api/user', userModel, UserRouter)
 
 //change Password without login
 app.put('/changePassword', forgotPassword)
@@ -64,6 +65,7 @@ app.put('/changePassword', forgotPassword)
 //admin auth
 app.post('/admin-register', userModel, adminSignUp)
 app.post('/admin-login', userModel, adminSignin)
+app.use('/api/projects', ProjectRouter)
 
 /**
  * Validation Test - this is an example on how to validate variable sent to the backend

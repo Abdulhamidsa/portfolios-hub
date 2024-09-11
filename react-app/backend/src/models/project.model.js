@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 const { Schema, model } = mongoose
-const projectsSchema = new Schema({
+const projectSchema = new Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
@@ -35,5 +35,4 @@ const projectsSchema = new Schema({
         },
     ],
 })
-const Projects = model('projects', projectsSchema)
-export { Projects }
+export const Project = model('project', projectSchema)

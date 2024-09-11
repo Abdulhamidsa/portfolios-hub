@@ -8,45 +8,15 @@ const predefinedProfessions = [
     'backend development',
     'full stack development',
     'UI/UX designer',
-    'graphic designer',
+    'graphic design',
     'web designer',
     'product designer',
     'motion graphics',
     'visual designer',
     'creative director',
-    'digital marketer',
+    'digital marketing',
 ]
-const userCredentialSchema = new Schema({
-    _id: 0,
-    firstName: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    lastName: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    email: String,
-    mobile: {
-        type: String,
-        unique: true,
-    },
-    dateOfBirth: {
-        type: Date,
-        required: true,
-    },
-    password: {
-        type: String,
-        trim: true, // removes whitespaces from beginning and end
-    },
-})
+
 const userPeronalInfoSchema = new Schema({
     _id: 0,
     profilePicture: {
@@ -88,7 +58,6 @@ const UserSchema = new Schema(
             type: String,
             unique: true,
         },
-        credentials: userCredentialSchema,
         personalInfo: userPeronalInfoSchema,
         userType: {
             type: String,
@@ -104,14 +73,7 @@ const UserSchema = new Schema(
             type: Boolean,
             default: true,
         },
-        createdAt: {
-            type: Date,
-            default: Date.now,
-        },
-        updatedAt: {
-            type: Date,
-            default: Date.now,
-        },
+
         deletedAt: {
             type: Date,
         },
@@ -119,5 +81,5 @@ const UserSchema = new Schema(
     { timestamps: true }
 )
 
-const User = model('users', UserSchema)
+const User = model('user', UserSchema)
 export { User }

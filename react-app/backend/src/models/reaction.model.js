@@ -19,7 +19,7 @@ const ReactionSchema = new Schema(
         },
         targetType: {
             type: String,
-            enum: ['Porject', 'Comment'],
+            enum: ['project', 'Comment'],
             required: true,
         },
     },
