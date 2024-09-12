@@ -1,22 +1,16 @@
 {
     "compilerOptions": {
-        // "paths": {
-        //     "@/*": ["./src/*"],
-        //     "@/backend/*": ["./util/*"]
-        // },
         "moduleResolution": "node",
         "target": "es6",
         "module": "esnext",
         "outDir": "./dist",
-        // do we use this? why?
-        // "rootDir": "./src",
+        "rootDir": "./",
         "baseUrl": "./",
         "allowJs": true,
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true
     },
-
-    "include": ["src/**/*.js", "backend/server.ts", "src/routes/project/project.route.js"],
-    "exclude": ["node_modules"]
+    "include": ["**/*.ts", "**/*.js"],
+    "exclude": ["node_modules", "dist"]
 }

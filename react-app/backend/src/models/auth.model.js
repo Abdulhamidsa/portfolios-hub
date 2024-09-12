@@ -22,7 +22,11 @@ const credentialSchema = new Schema({
         required: true,
         unique: true,
     },
-    email: String,
+    email: {
+        type: String,
+        unique: true,
+        required: true,
+    },
     mobile: {
         type: String,
         unique: true,
@@ -36,5 +40,5 @@ const credentialSchema = new Schema({
         trim: true,
     },
 })
-const Credentials = model('Credentials', credentialSchema)
-export { Credentials }
+const Credential = model('Credential', credentialSchema)
+export { Credential }

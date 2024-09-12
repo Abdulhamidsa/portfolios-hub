@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 import { User } from '../src/models/user.model.js'
 import { Project } from '../src/models/project.model.js'
 import { Tag } from '../src/models/tags.model.js'
-import { Credentials } from '../src/models/auth.model.js'
+import { Credential } from '../src/models/auth.model.js'
 import { connect } from '../util/db.js'
 
 const predefinedLinks = ['cv', 'social media', 'pdf cv']
@@ -110,7 +110,7 @@ const generateTagsData = (count) => {
 
 const deleteExistingData = async () => {
     try {
-        await Promise.all([User.deleteMany({}), Project.deleteMany({}), Tag.deleteMany({}), Credentials.deleteMany({})])
+        await Promise.all([User.deleteMany({}), Project.deleteMany({}), Tag.deleteMany({}), Credential.deleteMany({})])
         console.log('Existing data deleted successfully')
     } catch (error) {
         console.error('Failed to delete existing data:', error)
@@ -131,7 +131,7 @@ const insertData = async () => {
         const allUsers = await User.find({}, '_id').exec()
         const userIds = allUsers.map((user) => user._id.toString())
         const credentials = userIds.map((userId) => generateUserCredentialData(userId))
-        await Credentials.insertMany(credentials)
+        await Credential.insertMany(credentials)
 
         const projects = generateProjectsData(20, userIds, tagIds)
         await Project.insertMany(projects)

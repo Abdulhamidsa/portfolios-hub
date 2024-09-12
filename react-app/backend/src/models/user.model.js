@@ -1,21 +1,7 @@
 import mongoose from 'mongoose'
-const { Schema, SchemaTypes, model } = mongoose
-// predefinedData
-const predefinedLinks = ['cv', 'social media', 'pdf cv']
-const predefinedProfessions = [
-    'web development',
-    'frontend development',
-    'backend development',
-    'full stack development',
-    'UI/UX designer',
-    'graphic design',
-    'web designer',
-    'product designer',
-    'motion graphics',
-    'visual designer',
-    'creative director',
-    'digital marketing',
-]
+const { Schema, model } = mongoose
+
+import { userConfig } from '../../config/user.data.config.js'
 
 const userPeronalInfoSchema = new Schema({
     _id: 0,
@@ -29,7 +15,7 @@ const userPeronalInfoSchema = new Schema({
     profession: {
         type: String,
         required: true,
-        enum: predefinedProfessions,
+        enum: userConfig.predefinedProfessions,
     },
     country: {
         type: String,
@@ -41,7 +27,7 @@ const userPeronalInfoSchema = new Schema({
                 type: String,
                 required: true,
                 trim: true,
-                enum: predefinedLinks,
+                enum: userConfig.predefinedLinks,
             },
             url: {
                 type: String,
@@ -53,7 +39,6 @@ const userPeronalInfoSchema = new Schema({
 })
 const UserSchema = new Schema(
     {
-        _id: SchemaTypes.ObjectId,
         friendlyId: {
             type: String,
             unique: true,
@@ -68,7 +53,7 @@ const UserSchema = new Schema(
             type: Boolean,
             default: true,
         },
-        // active status for last seen and online status
+        // active status for online status
         active: {
             type: Boolean,
             default: true,

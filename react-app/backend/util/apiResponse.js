@@ -9,7 +9,7 @@ const getErrorResponse = (error, type) => {
     return {
         result: false,
         error: error,
-        message: error.message || 'Error',
+        message: error || 'Error',
         type: type,
     }
 }

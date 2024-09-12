@@ -14,8 +14,13 @@ import { signup, signin, requiresLogin } from './util/auth.js'
 import { User } from './src/models/user.model.js'
 import UserRouter from './src/routes/user.router.js'
 import ProjectRouter from './src/routes/project/project.route.js'
+import usersRouter from './src/routes/user.api.js'
 
+// Other middleware and routes
+
+// Start the server
 const app = express()
+
 export const userModel = (req, res, next) => {
     req.model = User
     next()
@@ -49,12 +54,9 @@ app.get('/', (req, res) => {
     res.json('Server is Running')
 })
 
+app.use('/', usersRouter)
 //util single file upload API
 app.post('/upload', upload.single('file'), (req, res) => res.send({ imageURL: req.file.path }))
-
-//Auth Routes for user
-app.post('/register', userModel, signup)
-app.post('/login', userModel, signin)
 
 //user crud API'S
 app.use('/api/user', userModel, UserRouter)

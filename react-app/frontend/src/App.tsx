@@ -1,13 +1,16 @@
 import "./App.css";
 import { getData } from "../services/api";
+import SignInForm from "./components/SignInForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Suspense, useState } from "react";
+// import { useForm, SubmitHandler } from "react-hook-form";
 import useSWR from "swr";
-import { v4 as uuidv4 } from "uuid";
+
+// import { v4 as uuidv4 } from "uuid";
 
 const baseUrl = "http://localhost:4000";
 const endPoints = {
@@ -112,10 +115,11 @@ const MyComponent = () => {
 function App() {
   return (
     <>
+      <SignInForm />
+
       <Suspense fallback={<div>Loading...</div>}>
         <MyComponent />
       </Suspense>
-      <h2>hey</h2>
     </>
   );
 }

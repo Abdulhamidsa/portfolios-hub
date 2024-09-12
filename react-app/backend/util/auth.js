@@ -1,29 +1,52 @@
 import { newToken, verifyToken } from './jwt.js'
 import { User } from '../src/models/user.model.js'
+import { Credential } from '../src/models/auth.model.js'
+import { requiredFields } from '../config/register.data.config.js'
+import bcrypt from 'bcryptjs'
+
 const signup = async (req, res, next) => {
-    let { mobile, name, password, photo } = req.body
+    const { firstName, lastName, username, dateOfBirth, password, email, mobile, userId } = req.body
 
-    if (!mobile || !name || !password) {
-        return res.status(400).send({ message: 'Required fields missing' })
-    }
-
-    if (req.body.userType === 'admin') {
-        return res.status(400).send({ message: 'You are not authorised to create admin user' })
-    }
-
-    try {
-        const user = await User.findOne({ mobile })
-
-        if (user) {
-            return res.status(200).send({ status: 'failed', message: 'Mobile No is already in use' })
-        } else {
-            if (!photo) {
-                photo = `https://api.dicebear.com/9.x/pixel-art/svg?seed=${name}`
-            }
-            const newUser = await User.create({ ...req.body, approved: true, active: true })
-            const userFound = await User.findOne({ mobile }).select('name mobile photo')
-            return res.status(201).send({ status: 'OK', data: userFound, token: newToken(newUser) })
+    for (const { field, required, message } of requiredFields) {
+        if (required && !req.body[field]) {
+            return res.status(400).send({ message })
         }
+    }
+
+    // if (req.body.userType === userTypes.ADMIN) {
+    //     return res.status(400).send({ message: 'You are not authorised to create admin user' })
+    // }
+    try {
+        const password = await bcrypt.hash(req.body.password, 10)
+        const userByMobile = await Credential.findOne({ mobile: mobile || '' })
+        const userByName = await Credential.findOne({ username })
+        const userByEmail = await Credential.findOne({ email })
+
+        if (userByName) {
+            return res.status(200).send({ status: 'failed', message: 'Username is already in use' })
+        }
+        if (userByEmail) {
+            return res.status(200).send({ status: 'failed', message: 'Email is already in use' })
+        }
+        if (userByMobile) {
+            return res.status(200).send({ status: 'failed', message: 'Mobile is already in use' })
+        }
+
+        const newUser = await Credential.create({
+            userId,
+            firstName,
+            lastName,
+            username,
+            dateOfBirth,
+            password,
+            email,
+            mobile,
+        })
+
+        const userFound = await Credential.findOne({ username }).select(
+            'firstName lastName username dateOfBirth email mobile photo'
+        )
+        return res.status(201).send({ status: 'OK', data: userFound, token: newToken(newUser) })
     } catch (e) {
         console.log(e)
         return res.status(500).send({ error: e.message })
