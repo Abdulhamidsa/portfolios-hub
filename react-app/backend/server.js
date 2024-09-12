@@ -10,7 +10,7 @@ import { connect } from './util/db.js'
 import { SECRETS } from './util/config.js'
 import { upload } from './util/upload.js'
 import { forgotPassword } from './src/controllers/user.controllers.js'
-import { signup, signin, requiresLogin, adminSignin, adminSignUp, requiresAdminLogin } from './util/auth.js'
+import { signup, signin, requiresLogin } from './util/auth.js'
 import { User } from './src/models/user.model.js'
 import UserRouter from './src/routes/user.router.js'
 import ProjectRouter from './src/routes/project/project.route.js'
@@ -63,8 +63,8 @@ app.use('/api/user', userModel, UserRouter)
 app.put('/changePassword', forgotPassword)
 
 //admin auth
-app.post('/admin-register', userModel, adminSignUp)
-app.post('/admin-login', userModel, adminSignin)
+// app.post('/admin-register', userModel, adminSignUp)
+// app.post('/admin-login', userModel, adminSignin)
 app.use('/api/projects', ProjectRouter)
 
 /**

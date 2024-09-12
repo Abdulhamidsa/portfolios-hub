@@ -68,8 +68,9 @@ const generateUserData = (count) => {
         updatedAt: faker.date.recent(),
     }))
 }
-const generateUserCredentialData = (count, userId) => {
-    return Array.from({ length: count }).map(() => ({
+
+const generateUserCredentialData = (userId) => {
+    return {
         userId: userId,
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
@@ -78,7 +79,7 @@ const generateUserCredentialData = (count, userId) => {
         mobile: faker.phone.number(),
         dateOfBirth: faker.date.birthdate(),
         password: faker.internet.password(),
-    }))
+    }
 }
 
 const generateProjectsData = (count, userIds, tagIds) => {
@@ -100,6 +101,7 @@ const generateProjectsData = (count, userIds, tagIds) => {
         }
     })
 }
+
 const generateTagsData = (count) => {
     return Array.from({ length: count }).map(() => ({
         name: faker.helpers.arrayElement(predefinedTags),
@@ -108,7 +110,7 @@ const generateTagsData = (count) => {
 
 const deleteExistingData = async () => {
     try {
-        await Promise.all([User.deleteMany({}), Project.deleteMany({}), Tag.deleteMany({})])
+        await Promise.all([User.deleteMany({}), Project.deleteMany({}), Tag.deleteMany({}), Credentials.deleteMany({})])
         console.log('Existing data deleted successfully')
     } catch (error) {
         console.error('Failed to delete existing data:', error)
@@ -125,12 +127,11 @@ const insertData = async () => {
 
         const users = generateUserData(10)
         await User.insertMany(users)
+
         const allUsers = await User.find({}, '_id').exec()
         const userIds = allUsers.map((user) => user._id.toString())
-
-        // Generate credentials for each user
-        // const credentials = userIds.map((userId) => generateUserCredentialData(userId))
-        // await Credentials.insertMany(credentials)
+        const credentials = userIds.map((userId) => generateUserCredentialData(userId))
+        await Credentials.insertMany(credentials)
 
         const projects = generateProjectsData(20, userIds, tagIds)
         await Project.insertMany(projects)
