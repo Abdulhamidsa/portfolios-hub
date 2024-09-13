@@ -1,13 +1,11 @@
 import { getAllProjects } from '../controllers/project.controller.js'
 import { getSuccessResponse, getErrorResponse } from '../../util/apiResponse.js'
-
 const getProjects = async (req, res) => {
     try {
         const projects = await getAllProjects()
-        res.status(200).json(getSuccessResponse(projects))
+        return getSuccessResponse(projects, 200)(res)
     } catch (error) {
-        res.status(500).json(getErrorResponse(error, 'GET_PROJECTS_ERROR'))
+        return getErrorResponse(500)(res)
     }
 }
-
 export default getProjects

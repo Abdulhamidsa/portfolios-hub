@@ -10,21 +10,19 @@ import { connect } from './util/db.js'
 import { SECRETS } from './util/config.js'
 import { upload } from './util/upload.js'
 import { forgotPassword } from './src/controllers/user.controllers.js'
-import { signup, signin, requiresLogin } from './util/auth.js'
-import { User } from './src/models/user.model.js'
+import dotenv from 'dotenv'
+// import { signup, signin, requiresLogin } from './util/auth.js';
+// import { User } from './src/models/user.model.js';
 import UserRouter from './src/routes/user.router.js'
 import ProjectRouter from './src/routes/project/project.route.js'
 import usersRouter from './src/routes/user.api.js'
+// import { setModel } from './middleware/setModel.js';
 
 // Other middleware and routes
 
+dotenv.config()
 // Start the server
 const app = express()
-
-export const userModel = (req, res, next) => {
-    req.model = User
-    next()
-}
 
 const limiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
@@ -35,6 +33,7 @@ const limiter = rateLimit({
 
 // Apply the rate limiting middleware to all requests
 app.use(limiter)
+app.use(morgan('dev'))
 
 app.use(helmet())
 app.use((req, res, next) => {
@@ -46,27 +45,33 @@ app.use((req, res, next) => {
 app.use(helmet.hidePoweredBy())
 app.use(json())
 app.use(urlencoded({ extended: true }))
-app.use(cors())
-app.use(morgan('dev'))
 
-//endpoint shows Server Running
+// Configure CORS to allow requests from a specific domain
+const corsOptions = {
+    origin: 'http://localhost:5173', // Replace with your domain
+    optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
+    credentials: true, // Access-Control-Allow-Credentials: true
+}
+app.use(cors(corsOptions))
+
+// Endpoint shows Server Running
 app.get('/', (req, res) => {
     res.json('Server is Running')
 })
 
-app.use('/', usersRouter)
-//util single file upload API
+app.use('/auth', usersRouter)
+// Util single file upload API
 app.post('/upload', upload.single('file'), (req, res) => res.send({ imageURL: req.file.path }))
 
-//user crud API'S
-app.use('/api/user', userModel, UserRouter)
+// User CRUD APIs
+app.use('/api/user', UserRouter)
 
-//change Password without login
+// Change Password without login
 app.put('/changePassword', forgotPassword)
 
-//admin auth
-// app.post('/admin-register', userModel, adminSignUp)
-// app.post('/admin-login', userModel, adminSignin)
+// Admin auth
+// app.post('/admin-register', userModel, adminSignUp);
+// app.post('/admin-login', userModel, adminSignin);
 app.use('/api/projects', ProjectRouter)
 
 /**
@@ -88,7 +93,7 @@ const schema = z.object({
 
 app.get('/test-validation/:testid', validZod(schema, 'params'), (req, res, next) => {
     //
-    // no need to have any validation or checks to make sure if the testid is valid or exists
+    // No need to have any validation or checks to make sure if the testid is valid or exists
     //
     const testid = req.params.testid
 

@@ -1,105 +1,85 @@
 import { newToken, verifyToken } from './jwt.js'
-import { User } from '../src/models/user.model.js'
 import { Credential } from '../src/models/auth.model.js'
 import { requiredFields } from '../config/register.data.config.js'
 import bcrypt from 'bcryptjs'
+import { getSuccessResponse, getErrorResponse } from '../util/apiResponse.js'
+import jwt from 'jsonwebtoken'
 
-const signup = async (req, res, next) => {
+const signup = async (req, res) => {
     const { firstName, lastName, username, dateOfBirth, password, email, mobile, userId } = req.body
 
     for (const { field, required, message } of requiredFields) {
         if (required && !req.body[field]) {
-            return res.status(400).send({ message })
+            return res.status(400).json({ message })
         }
     }
 
-    // if (req.body.userType === userTypes.ADMIN) {
-    //     return res.status(400).send({ message: 'You are not authorised to create admin user' })
-    // }
     try {
-        const password = await bcrypt.hash(req.body.password, 10)
-        const userByMobile = await Credential.findOne({ mobile: mobile || '' })
-        const userByName = await Credential.findOne({ username })
-        const userByEmail = await Credential.findOne({ email })
+        const [userByMobile, userByName, userByEmail] = await Promise.all([
+            Credential.findOne({ mobile: mobile || '' }),
+            Credential.findOne({ username }),
+            Credential.findOne({ email }),
+        ])
 
         if (userByName) {
-            return res.status(200).send({ status: 'failed', message: 'Username is already in use' })
+            return getErrorResponse('Username is already in use', 409)(res)
         }
         if (userByEmail) {
-            return res.status(200).send({ status: 'failed', message: 'Email is already in use' })
+            return getErrorResponse('Email is already in use', 409)(res)
         }
         if (userByMobile) {
-            return res.status(200).send({ status: 'failed', message: 'Mobile is already in use' })
+            return getErrorResponse('Mobile number is already in use', 409)(res)
         }
-
+        const hashedPassword = await bcrypt.hash(req.body.password, 10)
         const newUser = await Credential.create({
             userId,
             firstName,
             lastName,
             username,
             dateOfBirth,
-            password,
+            password: hashedPassword,
             email,
             mobile,
         })
 
-        const userFound = await Credential.findOne({ username }).select(
-            'firstName lastName username dateOfBirth email mobile photo'
-        )
-        return res.status(201).send({ status: 'OK', data: userFound, token: newToken(newUser) })
-    } catch (e) {
-        console.log(e)
-        return res.status(500).send({ error: e.message })
+        return getSuccessResponse('user created succecfully', 200)(res)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json(getErrorResponse('Server error. Please try again later.', 500))
     }
 }
 
 const signin = async (req, res) => {
     const Model = req.model
     const { mobile, password } = req.body
-
-    if (!mobile || !password) return res.status(400).send({ message: 'Mobile and password required' })
-
-    const user = await Model.findOne({ mobile })
-
-    if (!user) return res.status(200).send({ status: 'failed', message: 'Mobile No not registered' })
-
-    if (user.active === 'false')
-        return res.status(200).send({ status: 'failed', message: 'Account is suspended.Please contact admin.' })
-
+    if (!mobile || !password) {
+        return res.status(400).json({ message: 'Mobile and password are required.' })
+    }
     try {
-        const match = await user.checkPassword(password)
-        if (!match) {
-            if (user.loginAttempts === 4) {
-                await Model.findOneAndUpdate(
-                    { mobile },
-                    {
-                        active: false,
-                        $inc: { loginAttempts: 1 },
-                    }
-                )
-                setTimeout(async () => {
-                    await Model.findOneAndUpdate(
-                        { mobile },
-                        {
-                            active: true,
-                            loginAttempts: 0,
-                        }
-                    )
-                }, 300000)
-                return res
-                    .status(200)
-                    .send({ status: 'failed', message: 'You had 5 unsuccessful login attempts, try after 5 minutes.' })
-            }
-            return res.status(200).send({ status: 'failed', message: 'Invalid Password' })
+        const user = await Model.findOne({ mobile })
+        if (!user) {
+            return res.status(404).json({ status: 'failed', message: 'Mobile number is not registered.' })
         }
-        const userfound = await Model.findOne({ mobile }).select('name mobile photo')
-        return res.status(201).send({ status: 'ok', userData: userfound, token: newToken(user) })
-    } catch (e) {
-        console.log(e)
-        return res.status(401).send({ message: 'Not Authorized' })
+        if (user.active === false) {
+            return res.status(403).json({ status: 'failed', message: 'Account is suspended. Please contact admin.' })
+        }
+        const match = await bcrypt.compare(password, user.password)
+        if (!match) {
+            return res.status(401).json({ status: 'failed', message: 'Invalid password.' })
+        }
+        const userData = await Model.findOne({ mobile }).select('name mobile photo')
+        const accesstoken = newToken(user)
+        console.log('accesstoken', accesstoken)
+        res.cookie('token', accesstoken, { httpOnly: true, secure: true })
+        const refreshToken = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: '7d' })
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
+        // return res.status(200).json({ status: 'ok', data: userData, token: accesstoken })
+        return getSuccessResponse({ userData, accesstoken }, 200)(res)
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ message: 'Server error. Please try again later.' })
     }
 }
-
 const requiresLogin = async (req, res, next) => {
     const Model = req.model
     if (!req.headers.authorization) {
