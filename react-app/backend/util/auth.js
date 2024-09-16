@@ -1,5 +1,5 @@
 import { newToken, verifyToken } from './jwt.js'
-import { Credential } from '../src/models/auth.model.js'
+import { Credential } from '../src/models/credential.model.js'
 import { requiredFields } from '../config/register.data.config.js'
 import bcrypt from 'bcryptjs'
 import { getSuccessResponse, getErrorResponse } from '../util/apiResponse.js'

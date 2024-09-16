@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker'
 import { User } from '../src/models/user.model.js'
 import { Project } from '../src/models/project.model.js'
 import { Tag } from '../src/models/tags.model.js'
-import { Credential } from '../src/models/auth.model.js'
+import { Credential } from '../src/models/credential.model.js'
 import { connect } from '../util/db.js'
 
 const predefinedLinks = ['cv', 'social media', 'pdf cv']

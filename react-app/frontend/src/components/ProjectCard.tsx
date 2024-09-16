@@ -1,4 +1,5 @@
-import { getData } from "../../services/api";
+import { apiRequest } from "../../services/api";
+import { endPoints } from "../confige/api.config";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,26 +20,12 @@ interface ProjectItem {
   likes: string[];
 }
 
-const baseUrl = "http://localhost:4000";
-const endPoints = {
-  frontpage: {
-    projects: baseUrl + "/api/projects",
-    users: baseUrl + "/api/user",
-  },
-  auth: {
-    login: baseUrl + "/api/auth/login",
-    register: baseUrl + "/api/register",
-    password: baseUrl + "/api/password",
-    changePassword: baseUrl + "/changePassword",
-  },
-} as const;
-
 interface ApiResponse {
   data: ProjectItem[];
 }
 
 const useMyData = () => {
-  const { data, isValidating, isLoading, error } = useSWR<ApiResponse>(endPoints.frontpage.projects, getData, { suspense: true });
+  const { data, isValidating, isLoading, error } = useSWR<ApiResponse>(endPoints.frontpage.projects, apiRequest);
   return { data, error, isValidating, isLoading };
 };
 

@@ -1,6 +1,6 @@
 import express from 'express'
 import { signup, signin } from '../../util/auth.js'
-import { Credential } from '../models/auth.model.js'
+import { Credential } from '../models/credential.model.js'
 import { setModel } from '../../middleware/setModel.js'
 
 const router = express.Router()

@@ -1,9 +1,11 @@
-import { fetcher } from "../../services/api";
+import { apiRequest } from "../../services/api";
+import { endPoints } from "../confige/api.config.ts";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import useSWR from "swr";
 
 type FormData = {
@@ -19,6 +21,7 @@ type ApiResponse = {
 export default function MultiStepLoginFormComponent() {
   const [step, setStep] = useState(1);
   const [apiResponse, setApiResponse] = useState<ApiResponse | null>(null);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -27,7 +30,7 @@ export default function MultiStepLoginFormComponent() {
     getValues,
   } = useForm<FormData>();
 
-  useSWR("login", fetcher, {
+  useSWR("signin", apiRequest, {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
   });
@@ -42,11 +45,12 @@ export default function MultiStepLoginFormComponent() {
       }
 
       try {
-        const response = await fetcher("http://localhost:4000/auth/login", {
+        const response = await apiRequest(endPoints.auth.login, "POST", {
           mobile: data.mobile,
           password: data.password,
         });
         setApiResponse({ success: true, message: response.message || "Login successful!" });
+        navigate("/homepage");
       } catch (error) {
         console.error("Login error:", error);
         setApiResponse({ success: false, message: "Login failed. Please try again." });

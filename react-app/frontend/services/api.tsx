@@ -1,58 +1,45 @@
-// interface PersonalInfo {}
-
-// interface User {
-//   _id: string;
-//   friendlyId: string;
-//   personalInfo: PersonalInfo;
-//   userType: string;
-//   approved: boolean;
-//   // Add other fields as needed
-// }
-
-// interface Data {
-//   status: string;
-//   user: User;
-// }
-
-
-
-type ApiResponse = {
-  success: boolean;
-  message: string;
+type RequestOptions = {
+  method?: string;
+  headers?: Record<string, string>;
+  body?: string;
+  credentials?: RequestCredentials;
 };
 
-interface RequestOptions extends RequestInit {
-  method?: "GET" | "POST" | "PUT" | "DELETE";
-  headers?: HeadersInit;
-  body?: BodyInit | null;
-}
+type ApiResponse = {
+  data: object;
+  success: boolean;
+  message?: string;
+};
 
-const getData = async (path: string, options: RequestOptions = { method: "GET" }): Promise<ApiResponse | null> => {
+const apiRequest = async (path: string, method: string = "GET", data?: object): Promise<ApiResponse | null> => {
   try {
+    const options: RequestOptions = {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    };
+
+    if (data && ["POST", "PUT", "PATCH"].includes(method)) {
+      options.body = JSON.stringify(data);
+    }
+
     const response = await fetch(path, options);
-    const data = await response.json();
-    return data;
+
+    const contentType = response.headers.get("Content-Type");
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    if (contentType && contentType.includes("application/json")) {
+      return await response.json();
+    }
+
+    return null;
   } catch (error) {
-    console.log(error);
+    console.error("API request failed:", error);
     return null;
   }
 };
-
-const fetcher = (url: string, data: object) => {
-  return fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-    credentials: "include",
-  }).then((response) => {
-    if (!response.ok) {
-      throw new Error("Login failed");
-    }
-    return response.json();
-  });
-};
-
-
-export { getData ,fetcher};
+export { apiRequest };
