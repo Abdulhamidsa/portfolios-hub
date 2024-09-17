@@ -5,7 +5,7 @@ const endPoints = {
     users: baseUrl + "/user",
   },
   auth: {
-    login: baseUrl + "/auth/login",
+    signin: baseUrl + "/auth/signin",
     register: baseUrl + "/auth/register",
     password: baseUrl + "/password",
     changePassword: baseUrl + "/changePassword",
