@@ -1,23 +1,19 @@
-import { navItems } from "../routes/routes";
-import MultiStepLoginFormComponent from "./MultiStepLoginFormComponent";
-import { MultiStepSignupFormComponent } from "./MultiStepSignupFormComponent";
-// import MultiStepLoginFormComponent from "./MultiStepLoginFormComponent";
+import { VisuallyHidden } from "../ui/VisuallyHidden";
+import { RegisterForm } from "@/components/auth/RegisterForm";
+import SigninForm from "@/components/auth/SigninForm";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { navItems } from "@/routes/routes";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export function Navbar() {
-  const [isAuthFormVisible, setAuthFormVisible] = useState(false);
-  const [isSignupFormVisible, setSignupFormVisible] = useState(false);
+  const [activeForm, setActiveForm] = useState<string | null>(null);
 
-  const toggleSignupForm = () => {
-    setSignupFormVisible(!isSignupFormVisible);
-  };
-  const toggleAuthForm = () => {
-    setAuthFormVisible(!isAuthFormVisible);
+  const toggleForm = (formType: string | null) => {
+    setActiveForm(formType);
   };
 
   return (
@@ -43,31 +39,37 @@ export function Navbar() {
           </Button>
         </SheetTrigger>
         <SheetContent side="right" className="pr-0">
-          <MobileNav toggleAuthForm={toggleAuthForm} />
+          <MobileNav toggleForm={toggleForm} />
         </SheetContent>
       </Sheet>
       <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
         <div className="w-full flex-1 md:w-auto md:flex-none">
-          <Dialog open={isAuthFormVisible} onOpenChange={setAuthFormVisible}>
+          <Dialog open={activeForm === "auth"} onOpenChange={(isOpen) => isOpen || setActiveForm(null)}>
+            <VisuallyHidden>
+              <DialogTitle></DialogTitle>
+            </VisuallyHidden>
             <DialogTrigger asChild>
-              <Button className="hidden md:inline-flex" onClick={toggleAuthForm}>
+              <Button className="hidden md:inline-flex" onClick={() => toggleForm("auth")}>
                 Sign In
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <MultiStepLoginFormComponent />
+            <DialogContent aria-describedby={undefined} className="sm:max-w-[425px]">
+              <SigninForm OpenModal={setActiveForm} />
             </DialogContent>
           </Dialog>
         </div>
         <div className="w-full flex-1 md:w-auto md:flex-none">
-          <Dialog open={isSignupFormVisible} onOpenChange={setSignupFormVisible}>
+          <Dialog open={activeForm === "signup"} onOpenChange={(isOpen) => isOpen || setActiveForm(null)}>
+            <VisuallyHidden>
+              <DialogTitle></DialogTitle>
+            </VisuallyHidden>
             <DialogTrigger asChild>
-              <Button className="hidden md:inline-flex" onClick={toggleSignupForm}>
+              <Button className="hidden md:inline-flex" onClick={() => toggleForm("signup")}>
                 Sign Up
               </Button>
             </DialogTrigger>
             <DialogContent aria-describedby={undefined} className="sm:max-w-[425px]">
-              <MultiStepSignupFormComponent />
+              <RegisterForm />
             </DialogContent>
           </Dialog>
         </div>
@@ -76,7 +78,7 @@ export function Navbar() {
   );
 }
 
-function MobileNav({ toggleAuthForm }: { toggleAuthForm: () => void }) {
+function MobileNav({ toggleForm }: { toggleForm: (formType: string | null) => void }) {
   return (
     <div className="flex flex-col space-y-3 pt-6">
       <a href="/" className="mb-4 flex items-center space-x-2">
@@ -89,7 +91,7 @@ function MobileNav({ toggleAuthForm }: { toggleAuthForm: () => void }) {
         </Link>
       ))}
 
-      <Button className="w-fit" onClick={toggleAuthForm}>
+      <Button className="w-fit" onClick={() => toggleForm("auth")}>
         Sign In / Sign Up
       </Button>
     </div>
