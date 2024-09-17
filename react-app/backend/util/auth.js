@@ -51,33 +51,31 @@ const signup = async (req, res) => {
 
 const signin = async (req, res) => {
     const Model = req.model
-    const { mobile, password } = req.body
-    if (!mobile || !password) {
-        return res.status(400).json({ message: 'Mobile and password are required.' })
+    const { email, password } = req.body
+    if (!email || !password) {
+        return getErrorResponse('Email and password required', 400)(res)
     }
     try {
-        const user = await Model.findOne({ mobile })
+        const user = await Model.findOne({ email })
         if (!user) {
-            return res.status(404).json({ status: 'failed', message: 'Mobile number is not registered.' })
+            return getErrorResponse('Email not registered', 400)(res)
         }
         if (user.active === false) {
-            return res.status(403).json({ status: 'failed', message: 'Account is suspended. Please contact admin.' })
+            return getErrorResponse('User is blocked', 401)(res)
         }
         const match = await bcrypt.compare(password, user.password)
         if (!match) {
-            return res.status(401).json({ status: 'failed', message: 'Invalid password.' })
+            return getErrorResponse('Invalid Email or Password', 401)(res)
         }
-        const userData = await Model.findOne({ mobile }).select('name mobile photo')
+        const userData = await Model.findOne({ email }).select('name email photo')
         const accesstoken = newToken(user)
-        console.log('accesstoken', accesstoken)
         res.cookie('token', accesstoken, { httpOnly: true, secure: true })
         const refreshToken = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: '7d' })
         res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
-        // return res.status(200).json({ status: 'ok', data: userData, token: accesstoken })
         return getSuccessResponse({ userData, accesstoken }, 200)(res)
     } catch (error) {
         console.error(error)
-        return res.status(500).json({ message: 'Server error. Please try again later.' })
+        return getErrorResponse('Server error. Please try again later.', 500)(res)
     }
 }
 const requiresLogin = async (req, res, next) => {
