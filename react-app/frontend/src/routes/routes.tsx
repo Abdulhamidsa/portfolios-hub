@@ -1,5 +1,5 @@
-import Contact from "../pages/contact";
-import HomePage from "../pages/home";
+import Contact from "@/pages/contact";
+import Home from "@/pages/home";
 
 interface RouteConfig {
   path: string;
@@ -8,8 +8,7 @@ interface RouteConfig {
 }
 
 export const routes: RouteConfig[] = [
-  // { path: "/", element: <HomePage />, label: "Home" },
-  { path: "/homepage", element: <HomePage />, label: "Home" },
+  { path: "/", element: <Home />, label: "Home" },
   { path: "/contact", element: <Contact />, label: "Contact" },
 ];
 

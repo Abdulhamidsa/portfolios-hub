@@ -1,6 +1,6 @@
-import "./App.css";
-import Loading from "./components/Loading";
-import { routes } from "./routes/routes";
+import "@/App.css";
+import Loading from "@/components/loaders/Loading";
+import { routes } from "@/routes/routes";
 import { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 
