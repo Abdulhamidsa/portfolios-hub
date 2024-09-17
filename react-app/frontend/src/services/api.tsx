@@ -1,9 +1,9 @@
-type RequestOptions = {
-  method?: string;
-  headers?: Record<string, string>;
-  body?: string;
-  credentials?: RequestCredentials;
-};
+// type RequestOptions = {
+//   method?: string;
+//   headers?: Record<string, string>;
+//   body?: string;
+//   credentials?: RequestCredentials;
+// };
 
 type ApiResponse = {
   data: object;
@@ -11,9 +11,12 @@ type ApiResponse = {
   message?: string;
 };
 
-const getData = async (path: string, options: RequestOptions = { method: "GET" }): Promise<ApiResponse | null> => {
+const getData = async (path: string): Promise<ApiResponse | null> => {
   try {
-    const response = await fetch(path, options);
+    const response = await fetch(path);
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
+    }
     const data = await response.json();
     return data;
   } catch (error) {
@@ -21,6 +24,7 @@ const getData = async (path: string, options: RequestOptions = { method: "GET" }
     return null;
   }
 };
+
 const fetcher = async (url: string, data: object) => {
   try {
     const response = await fetch(url, {
@@ -31,11 +35,10 @@ const fetcher = async (url: string, data: object) => {
       body: JSON.stringify(data),
       credentials: "include",
     });
-
     if (!response.ok) {
-      throw new Error("Login failed");
+      const errorData = await response.json();
+      throw new Error(errorData.data || "An error occurred during the request");
     }
-
     const result = await response.json();
     return result;
   } catch (error) {
