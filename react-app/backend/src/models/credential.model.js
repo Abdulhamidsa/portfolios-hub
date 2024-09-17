@@ -27,10 +27,7 @@ const credentialSchema = new Schema({
         unique: true,
         required: true,
     },
-    mobile: {
-        type: Number,
-        unique: true,
-    },
+
     dateOfBirth: {
         type: Date,
         required: true,
