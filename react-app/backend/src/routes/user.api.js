@@ -6,6 +6,6 @@ import { setModel } from '../../middleware/setModel.js'
 const router = express.Router()
 router.use(setModel(Credential))
 router.post('/register', signup)
-router.post('/login', signin)
+router.post('/signin', signin)
 
 export default router
