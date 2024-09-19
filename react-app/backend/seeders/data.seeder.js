@@ -5,6 +5,8 @@ import { Project } from '../src/models/project.model.js'
 import { Tag } from '../src/models/tags.model.js'
 import { Credential } from '../src/models/credential.model.js'
 import { connect } from '../util/db.js'
+import dotenv from 'dotenv'
+dotenv.config({ path: '../.env.dev' })
 
 const predefinedLinks = ['cv', 'social media', 'pdf cv']
 const predefinedProfessions = [
@@ -45,7 +47,6 @@ const predefinedTags = [
     'tailwind',
     'sass',
 ]
-
 const generateUserData = (count) => {
     return Array.from({ length: count }).map(() => ({
         personalInfo: {
