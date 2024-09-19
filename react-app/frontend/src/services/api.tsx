@@ -1,31 +1,22 @@
-// type RequestOptions = {
-//   method?: string;
-//   headers?: Record<string, string>;
-//   body?: string;
-//   credentials?: RequestCredentials;
-// };
+import { axiosInstance } from "../api/axiosConfig";
 
-type ApiResponse = {
-  data: object;
-  success: boolean;
-  message?: string;
+export type ApiResponse<T> = {
+  data: T;
+  result: boolean;
+  message: string;
 };
 
-const getData = async (path: string): Promise<ApiResponse | null> => {
+async function getData<T>(path: string): Promise<T> {
   try {
-    const response = await fetch(path);
-    if (!response.ok) {
-      throw new Error("Failed to fetch data");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-};
+    const response = await axiosInstance.get<T>(path);
 
-const fetcher = async (url: string, data: object) => {
+    return response.data;
+  } catch (error) {
+    throw new Error(`Failed to fetch data: ${(error as Error).message}`);
+  }
+}
+
+const fetcher = async (url: string, data: object): Promise<ApiResponse<object>> => {
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -46,4 +37,5 @@ const fetcher = async (url: string, data: object) => {
     throw error;
   }
 };
+
 export { getData, fetcher };
