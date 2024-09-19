@@ -1,7 +1,7 @@
 const getSuccessResponse = (data, status) => (res) => {
     res.status(status).json({
         result: true,
-        data: data,
+        data,
     })
 }
 

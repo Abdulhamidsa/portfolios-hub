@@ -1,9 +1,10 @@
-import { newToken, verifyToken } from './jwt.js'
+import { generateNewToken, verifyToken } from './jwt.js'
 import { Credential } from '../src/models/credential.model.js'
 import { requiredFields } from '../config/register.data.config.js'
 import bcrypt from 'bcryptjs'
 import { getSuccessResponse, getErrorResponse } from '../util/apiResponse.js'
 import jwt from 'jsonwebtoken'
+import path from 'path'
 
 const signup = async (req, res) => {
     const { firstName, lastName, username, dateOfBirth, password, email, mobile, userId } = req.body
@@ -60,18 +61,14 @@ const signin = async (req, res) => {
         if (!user) {
             return getErrorResponse('Email not registered', 400)(res)
         }
-        if (user.active === false) {
-            return getErrorResponse('User is blocked', 401)(res)
-        }
-        const match = await bcrypt.compare(password, user.password)
-        if (!match) {
+        if (password !== user.password) {
             return getErrorResponse('Invalid Email or Password', 401)(res)
         }
-        const userData = await Model.findOne({ email }).select('name email photo')
-        const accesstoken = newToken(user)
-        res.cookie('token', accesstoken, { httpOnly: true, secure: true })
+        const userData = await Model.findOne({ email }).select('name email')
+        const accesstoken = generateNewToken(user)
+        res.cookie('accessToken', accesstoken, { httpOnly: false, secure: true, path: '/' })
         const refreshToken = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: '7d' })
-        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
+        res.cookie('refreshToken', refreshToken, { httpOnly: false, secure: true, path: '/' })
         return getSuccessResponse({ userData, accesstoken }, 200)(res)
     } catch (error) {
         console.error(error)
@@ -79,17 +76,25 @@ const signin = async (req, res) => {
     }
 }
 const requiresLogin = async (req, res, next) => {
-    const Model = req.model
+    const Model = 'Credential'
+    console.log(Model)
+
     if (!req.headers.authorization) {
         return res.status(401).send({ message: 'User not authorized' })
     }
+
     let token = req.headers.authorization.split('Bearer ')[1]
+    console.log('token', token)
+
     if (!token) {
         return res.status(401).send({ message: 'Token not found' })
     }
+
     try {
         const payload = await verifyToken(token)
-        const user = await Model.findById(payload.id).select('-password').lean().exec()
+        console.log('payload', payload)
+
+        const user = await Credential.findById(payload.id).select('-password').lean().exec()
         req.user = user
         next()
     } catch (e) {
