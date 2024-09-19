@@ -1,5 +1,6 @@
 import express, { urlencoded, json } from 'express'
 import helmet from 'helmet'
+import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import cors from 'cors'
 import z from 'zod'
@@ -10,18 +11,9 @@ import { connect } from './util/db.js'
 import { SECRETS } from './util/config.js'
 import { upload } from './util/upload.js'
 import { forgotPassword } from './src/controllers/user.controllers.js'
-import dotenv from 'dotenv'
-// import { signup, signin, requiresLogin } from './util/auth.js';
-// import { User } from './src/models/user.model.js';
 import UserRouter from './src/routes/user.router.js'
-import ProjectRouter from './src/routes/project/project.route.js'
-import usersRouter from './src/routes/user.api.js'
-// import { setModel } from './middleware/setModel.js';
-
-// Other middleware and routes
-
-dotenv.config()
-// Start the server
+import ProjectRouter from './src/routes/project/project.routes.js'
+import usersRouter from './src/routes/user/user.auth.routes.js'
 const app = express()
 
 const limiter = rateLimit({
@@ -30,6 +22,7 @@ const limiter = rateLimit({
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
+app.use(cookieParser())
 
 // Apply the rate limiting middleware to all requests
 app.use(limiter)
@@ -58,8 +51,9 @@ app.use(cors(corsOptions))
 app.get('/', (req, res) => {
     res.json('Server is Running')
 })
+app.use('/user', usersRouter)
+app.use('/project', ProjectRouter)
 
-app.use('/auth', usersRouter)
 // Util single file upload API
 app.post('/upload', upload.single('file'), (req, res) => res.send({ imageURL: req.file.path }))
 
@@ -72,7 +66,6 @@ app.put('/changePassword', forgotPassword)
 // Admin auth
 // app.post('/admin-register', userModel, adminSignUp);
 // app.post('/admin-login', userModel, adminSignin);
-app.use('/api/projects', ProjectRouter)
 
 /**
  * Validation Test - this is an example on how to validate variable sent to the backend
