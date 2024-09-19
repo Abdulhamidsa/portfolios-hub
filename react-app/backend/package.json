@@ -8,7 +8,8 @@
     "type": "module",
     "scripts": {
         "start": "node index",
-        "dev": "nodemon ",
+        "start:dev": "dotenv -e .env.dev nodemon node index",
+        "dev": "nodemon",
         "format": "eslint . --fix "
     },
     "engines": {
@@ -21,9 +22,11 @@
         "aws-sdk": "^2.910.0",
         "bcryptjs": "^2.4.3",
         "cloudinary": "^1.27.1",
+        "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
         "crypto": "^1.0.1",
         "dotenv": "^9.0.2",
+        "dotenv-cli": "^7.4.2",
         "express": "^4.17.1",
         "express-list-routes": "^1.1.3",
         "express-rate-limit": "^6.2.0",
