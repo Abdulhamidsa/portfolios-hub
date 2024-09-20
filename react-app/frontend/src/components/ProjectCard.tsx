@@ -1,48 +1,30 @@
-import { apiRequest } from "../../services/api";
-import { endPoints } from "../confige/api.config";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { useProject, ProjectItem } from "@/hooks/useFetchData";
+import { Heart, MessageCircle, Flag, ThumbsUp } from "lucide-react";
 import { useState } from "react";
-import useSWR from "swr";
 import { v4 as uuidv4 } from "uuid";
 
-interface ProjectItem {
-  _id: string;
-  title: string;
-  description: string;
-  projectUrl: string;
-  projectThumbnail: string;
-  projectImage: string[];
-  tags: string[];
-  likes: string[];
-}
-
-interface ApiResponse {
-  data: ProjectItem[];
-}
-
-const useMyData = () => {
-  const { data, isValidating, isLoading, error } = useSWR<ApiResponse>(endPoints.frontpage.projects, apiRequest);
-  return { data, error, isValidating, isLoading };
-};
-
-const ProjectCard = () => {
-  const { data } = useMyData();
+export default function ProjectCard() {
+  const { data, error } = useProject();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
-
   const handleProjectClick = (project: ProjectItem) => {
     setSelectedProject(project);
     setIsOpen(true);
   };
-  // console.log(data);
+  if (error) {
+    return <p>Error: {error.message}</p>;
+  }
   return (
     <div className="w-full flex flex-wrap gap-4">
-      {data?.data?.map((item: ProjectItem) => (
-        <div key={uuidv4()} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5">
+      {data?.map((item: ProjectItem) => (
+        <div key={item._id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5">
           <Card className="overflow-hidden">
             <CardHeader className="p-0">
               <Button variant="ghost" className="w-full p-0 h-auto" onClick={() => handleProjectClick(item)}>
@@ -67,6 +49,7 @@ const ProjectCard = () => {
             </CardContent>
             <CardFooter className="p-4 pt-0 flex justify-between items-center">
               <div className="flex items-center">
+                <ThumbsUp className="w-4 h-4 mr-1" />
                 <span className="text-sm">{item.likes}</span>
               </div>
             </CardFooter>
@@ -75,23 +58,53 @@ const ProjectCard = () => {
       ))}
       {selectedProject && (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-          <DialogContent className="max-w-3xl">
-            <DialogTitle>{selectedProject.title}</DialogTitle>
+          <DialogContent aria-describedby={undefined} className="max-w-xl">
+            <DialogHeader>
+              <div className="flex items-center space-x-4 mb-4">
+                <Avatar>
+                  <AvatarImage src={"/placeholder.svg?height=40&width=40"} />
+                  <AvatarFallback>{selectedProject.title.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <DialogTitle>{selectedProject.title}</DialogTitle>
+                  <p className="text-sm text-muted-foreground">{"Unknown Author"}</p>
+                </div>
+              </div>
+            </DialogHeader>
             <Carousel>
-              <CarouselContent>
+              <CarouselPrevious className=" z-40 absolute left-0 top-1/2 transform -translate-y-1/2" />
+              <CarouselNext className=" z-40 absolute right-0 top-1/2 transform -translate-y-1/2" />
+              <CarouselContent className="relative">
                 {selectedProject.projectImage.map((image, index) => (
                   <CarouselItem key={uuidv4()}>
-                    <img src={image} alt={`${selectedProject.title} - Image ${index + 1}`} className="w-full h-auto" />
+                    <img src={image} alt={`${selectedProject.title} - Image ${index + 1}`} className="w-80 h-auto m-auto" />
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
             </Carousel>
+
+            <Separator className="my-4" />
+            <p className="text-sm text-muted-foreground mb-4">{selectedProject.description}</p>
+
+            <div className="flex justify-between items-center">
+              <div className="flex space-x-4">
+                <Button variant="ghost" size="sm" className="flex items-center">
+                  <Heart className="w-4 h-4 mr-2" />
+                  Like
+                </Button>
+                <Button variant="ghost" size="sm" className="flex items-center">
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Comment
+                </Button>
+              </div>
+              <Button variant="ghost" size="sm" className="flex items-center">
+                <Flag className="w-4 h-4 mr-2" />
+                Report
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
       )}
     </div>
   );
-};
-export default ProjectCard;
+}
