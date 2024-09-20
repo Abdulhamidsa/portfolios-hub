@@ -1,4 +1,4 @@
-import { axiosInstance } from "../api/axiosConfig";
+import axiosInstance from "../api/axiosConfig";
 
 export type ApiResponse<T> = {
   data: T;
@@ -9,7 +9,6 @@ export type ApiResponse<T> = {
 async function getData<T>(path: string): Promise<T> {
   try {
     const response = await axiosInstance.get<T>(path);
-
     return response.data;
   } catch (error) {
     throw new Error(`Failed to fetch data: ${(error as Error).message}`);
@@ -18,20 +17,9 @@ async function getData<T>(path: string): Promise<T> {
 
 const fetcher = async (url: string, data: object): Promise<ApiResponse<object>> => {
   try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-      credentials: "include",
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.data || "An error occurred during the request");
-    }
-    const result = await response.json();
-    return result;
+    const response = await axiosInstance.post(url, data);
+    return response.data;
+    console.log(response.data);
   } catch (error) {
     console.error("Fetch error:", error);
     throw error;
