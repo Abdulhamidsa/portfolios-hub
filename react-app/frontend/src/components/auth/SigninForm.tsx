@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { signin } from "@/hooks/use-signin";
+import useSignIn from "@/hooks/useSignIn";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -27,8 +27,10 @@ export default function SigninForm({ OpenModal }: { OpenModal: (value: string | 
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
+  const { signIn } = useSignIn();
+
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    const response = await signin({ email: data.email, password: data.password });
+    const response = await signIn({ email: data.email, password: data.password });
     console.log(response);
     if (response.result) {
       setApiResponse({ success: true, message: response.message });
@@ -48,11 +50,11 @@ export default function SigninForm({ OpenModal }: { OpenModal: (value: string | 
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className=" space-y-4">
           <div className="space-y-2">
-            <Input defaultValue="aa@aee.csom" type="email" placeholder="Email" {...register("email")} />
+            <Input defaultValue="Otto_DuBuque75@hotmail.com" type="email" placeholder="Email" {...register("email")} />
             {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
           </div>
           <div className="space-y-2">
-            <Input defaultValue="thththt" type="password" placeholder="Password" {...register("password")} />
+            <Input defaultValue="5xstjYlN7MONIGC" type="password" placeholder="Password" {...register("password")} />
             {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
           </div>
           {apiResponse && <p className={`mt-4 text-sm ${apiResponse.success ? "text-green-500" : "text-red-500"}`}>{apiResponse.message}</p>}
