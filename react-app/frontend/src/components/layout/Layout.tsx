@@ -7,7 +7,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className=" flex flex-col gap-10">
+    <div className=" bg-[#24242a]">
       <header>
         <Navbar />
       </header>
@@ -16,5 +16,4 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     </div>
   );
 };
-
 export default Layout;
