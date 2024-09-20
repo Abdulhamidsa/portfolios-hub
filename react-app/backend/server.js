@@ -11,9 +11,10 @@ import { connect } from './util/db.js'
 import { SECRETS } from './util/config.js'
 import { upload } from './util/upload.js'
 import { forgotPassword } from './src/controllers/user.controllers.js'
-import UserRouter from './src/routes/user.router.js'
+import UserRouter from './src/routes/user/user.router.js'
 import ProjectRouter from './src/routes/project/project.routes.js'
 import usersRouter from './src/routes/user/user.auth.routes.js'
+import { refreshAccessToeken } from './src/controllers/refresh.token.js'
 const app = express()
 
 const limiter = rateLimit({
@@ -53,6 +54,7 @@ app.get('/', (req, res) => {
 })
 app.use('/user', usersRouter)
 app.use('/project', ProjectRouter)
+app.use('/auth', refreshAccessToeken)
 
 // Util single file upload API
 app.post('/upload', upload.single('file'), (req, res) => res.send({ imageURL: req.file.path }))
