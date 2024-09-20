@@ -33,7 +33,7 @@ export function Navbar() {
       </div>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" className="mr-2 px-0 text-base hover:bg-transparent text-white hover:text-gray-500 focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden">
+          <Button variant="ghost" className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden">
             <Menu className="h-5 w-5 " />
             <span className="sr-only">Toggle menu</span>
           </Button>
