@@ -1,3 +1,4 @@
+import Auth from "@/pages/auth";
 import Contact from "@/pages/contact";
 import Home from "@/pages/home";
 
@@ -10,6 +11,7 @@ interface RouteConfig {
 export const routes: RouteConfig[] = [
   { path: "/", element: <Home />, label: "Home" },
   { path: "/contact", element: <Contact />, label: "Contact" },
+  { path: "/auth", element: <Auth />, label: "Auth" },
 ];
 
 export const navItems = routes.map((route) => ({

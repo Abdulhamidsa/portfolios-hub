@@ -1,11 +1,10 @@
-import ProjectCard from "@/components/ProjectCard";
+import SigninForm from "@/components/auth/SigninForm";
 
 function Home() {
   return (
     <>
-      <ProjectCard />
+      <SigninForm OpenModal={() => {}} />
     </>
   );
 }
-
 export default Home;

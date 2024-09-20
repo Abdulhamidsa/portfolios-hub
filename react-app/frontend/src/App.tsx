@@ -17,3 +17,15 @@ function App() {
 }
 
 export default App;
+
+// const Wrapper = () => {
+//   const [isLogedIn, setIsLogedIn] = useState(false);
+//   useEffect(() => {
+//     setIsLogedIn(localStorage.getItem("Token") ? true : false);
+//   });
+//   return (
+//     <div className="App">
+//       {isLogedIn ? <App /> : <Login />}
+//     </div>
+//   );
+// };
