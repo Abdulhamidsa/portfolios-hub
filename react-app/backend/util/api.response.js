@@ -1,14 +1,15 @@
-const getSuccessResponse = (data, status) => (res) => {
+const getSuccessResponse = (res, status, data) => {
     res.status(status).json({
         result: true,
         data,
     })
 }
 
-const getErrorResponse = (data, status) => (res) => {
+const getErrorResponse = (res, status, message) => {
     res.status(status).json({
         result: false,
-        data,
+        message,
     })
 }
+
 export { getSuccessResponse, getErrorResponse }
