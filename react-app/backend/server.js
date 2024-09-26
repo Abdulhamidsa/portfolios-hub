@@ -9,12 +9,15 @@ import { validZod } from './util/validation.js'
 import expressListRoutes from 'express-list-routes'
 import { connect } from './util/db.js'
 import { SECRETS } from './util/config.js'
-import { upload } from './util/upload.js'
-import { forgotPassword } from './src/controllers/user.controllers.js'
-import UserRouter from './src/routes/user/user.router.js'
-import ProjectRouter from './src/routes/project/project.routes.js'
-import usersRouter from './src/routes/user/user.auth.routes.js'
-import { refreshAccessToeken } from './src/controllers/refresh.token.js'
+// import { upload } from './util/upload.js'
+// import { forgotPassword } from './src/controllers/user.controllers.js'
+// import UserRouter from './src/routes/user/user.router.js'
+import getUserRoute from './src/routes/user/route.get.user.js'
+import publicProjectRouter from './src/routes/project/project.routes.public.js'
+import privateProjectRouter from './src/routes/project/project.route.private.js'
+import usersRouter from './src/routes/user/route.auth.user.js'
+
+// import { refreshAccessToken } from './src/controllers/refresh.token.js'
 const app = express()
 
 const limiter = rateLimit({
@@ -42,9 +45,9 @@ app.use(urlencoded({ extended: true }))
 
 // Configure CORS to allow requests from a specific domain
 const corsOptions = {
-    origin: 'http://localhost:5173', // Replace with your domain
-    optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
-    credentials: true, // Access-Control-Allow-Credentials: true
+    origin: 'http://localhost:5173',
+    credentials: true,
+    optionsSuccessStatus: 200,
 }
 app.use(cors(corsOptions))
 
@@ -52,18 +55,21 @@ app.use(cors(corsOptions))
 app.get('/', (req, res) => {
     res.json('Server is Running')
 })
-app.use('/user', usersRouter)
-app.use('/project', ProjectRouter)
-app.use('/auth', refreshAccessToeken)
+app.use('/auth', usersRouter)
+app.use('/user', getUserRoute)
+app.use('/projects', publicProjectRouter)
+app.use('/user', privateProjectRouter)
+// app.use('/auth', refreshAccessToken)
+// app.use('/users/:friendlyId', getUserRoute)
 
-// Util single file upload API
-app.post('/upload', upload.single('file'), (req, res) => res.send({ imageURL: req.file.path }))
+// // Util single file upload API
+// app.post('/upload', upload.single('file'), (req, res) => res.send({ imageURL: req.file.path }))
 
-// User CRUD APIs
-app.use('/api/user', UserRouter)
+// // User CRUD APIs
+// app.use('/api/user', UserRouter)
 
-// Change Password without login
-app.put('/changePassword', forgotPassword)
+// // Change Password without login
+// app.put('/changePassword', forgotPassword)
 
 // Admin auth
 // app.post('/admin-register', userModel, adminSignUp);
