@@ -25,4 +25,11 @@ export const uploadProject = async (req, res) => {
 
 // fetch user projects
 
-export const fetchUserProjects = async (req, res) => {}
+export const fetchUserProjects = async (req, res) => {
+    try {
+        const projects = await Project.find({ userId: req.user._id })
+        return projects
+    } catch (error) {
+        throw error
+    }
+}

@@ -1,10 +1,11 @@
 import { Router } from 'express'
-import { handleUploadProjects } from '../../controllers/project.controller.js'
+import { handleUploadProjects, handleFetchUserProjects } from '../../controllers/project.controller.js'
 import { checkAuthentication } from '../../../util/auth.js'
 const router = Router()
 
+// user projects route
+router.get('/:friendlyId/projects/all', checkAuthentication, handleFetchUserProjects)
 // upload project
-// router.get('/:friendlyId/projects', checkAuthentication, handleGetUserProjects)
 router.post('/:friendlyId/projects/upload', checkAuthentication, handleUploadProjects)
 
 export default router
