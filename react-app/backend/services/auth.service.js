@@ -26,11 +26,30 @@ export const signinService = async (req, res) => {
 
         return { accessToken }
     } catch (error) {
-        throw error
+        throw { message: error.message || 'An error occurred while signing in', status: 500 }
     }
 }
-// required  login service
 
+// signout service
+export const signoutService = async (req) => {
+    try {
+        const accessToken = req.cookies.accessToken
+        const refreshToken = req.cookies.refreshToken
+
+        if (!accessToken && !refreshToken) {
+            return { message: 'User not logged in' }
+        }
+        if (accessToken && refreshToken) {
+            req.res.clearCookie('accessToken')
+            req.res.clearCookie('refreshToken')
+        }
+        return { message: 'Signout successful' }
+    } catch (error) {
+        throw { message: error.message || 'An error occurred while signing out', status: 500 }
+    }
+}
+
+// required  login service
 export const checkAuthenticationService = async (req) => {
     const authHeader = req.headers.authorization
     if (!authHeader?.startsWith('Bearer ')) {
@@ -51,6 +70,6 @@ export const checkAuthenticationService = async (req) => {
         }
         req.user = { ...userCredential, friendlyId: user.friendlyId }
     } catch (error) {
-        throw error
+        throw { message: error.message || 'An error occurred while authenticating user', status: 500 }
     }
 }
