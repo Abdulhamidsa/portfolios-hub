@@ -9,8 +9,16 @@
         "allowJs": true,
         "strict": true,
         "esModuleInterop": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "allowImportingTsExtensions": false
     },
-    "include": ["**/*.ts", "**/*.js"],
+    "include": [
+        "**/*.ts",
+        "**/*.js",
+        "services/project.service.public.js",
+        "src/routes/project/project.routes.public.js"
+    ],
     "exclude": ["node_modules", "dist"]
 }
