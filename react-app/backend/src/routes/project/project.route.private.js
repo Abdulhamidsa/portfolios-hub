@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { handleUploadProjects, handleFetchUserProjects } from '../../handlers/project.controller.js'
+import { handleUploadProjects, handleFetchUserProjects } from '../../handlers/project.handlers.js'
 import { checkAuthentication } from '../../../util/auth.js'
 const router = Router()
 
