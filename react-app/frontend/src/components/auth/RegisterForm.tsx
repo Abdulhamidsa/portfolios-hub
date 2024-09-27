@@ -1,4 +1,3 @@
-import { endPoints } from "@/api/axiosConfig";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Toast } from "@/components/ui/toast";
+import { endPoints } from "@/config/apiEndpoints";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
@@ -16,7 +16,6 @@ const userConfig = {
   predefinedProfessions: ["Developer", "Designer", "Manager", "Other"],
   predefinedLinks: ["GitHub", "LinkedIn", "Twitter", "Portfolio"],
 };
-
 type FormData = {
   firstName: string;
   lastName: string;
@@ -31,7 +30,6 @@ type FormData = {
   country: string;
   links: { name: string; url: string }[];
 };
-
 const signupApi = async (data: FormData): Promise<{ success: boolean; message: string }> => {
   try {
     const response = await fetch(endPoints.auth.register, { method: "POST", body: JSON.stringify(data), headers: { "Content-Type": "application/json" } });

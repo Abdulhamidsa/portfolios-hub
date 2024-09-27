@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import useSignIn from "@/hooks/useSignIn";
+import { useSignIn } from "@/hooks/useAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -13,7 +13,7 @@ const schema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
-type FormData = z.infer<typeof schema>;
+export type FormData = z.infer<typeof schema>;
 type ApiResponse = {
   success: boolean;
   message: string;
@@ -27,7 +27,7 @@ export default function SigninForm({ OpenModal }: { OpenModal: (value: string | 
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
-  const { signIn } = useSignIn();
+  const signIn = useSignIn();
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const response = await signIn({ email: data.email, password: data.password });
@@ -36,8 +36,8 @@ export default function SigninForm({ OpenModal }: { OpenModal: (value: string | 
       setApiResponse({ success: true, message: response.message });
       setTimeout(() => {
         OpenModal(null);
-        navigate("/");
-      }, 2000);
+        navigate("/auth");
+      }, 1000);
     } else {
       setApiResponse({ success: false, message: response.message });
     }

@@ -1,4 +1,4 @@
-import { endPoints } from "@/api/axiosConfig";
+import { endPoints } from "@/config/apiEndpoints";
 import { getData, ApiResponse } from "@/services/api";
 import useSWR from "swr";
 
@@ -16,7 +16,7 @@ export type ProjectItem = {
 type ProjectApiResponse = ApiResponse<ProjectItem[]>;
 
 export const useProject = () => {
-  const { data, error, isValidating, isLoading } = useSWR<ProjectApiResponse>(endPoints.frontpage.projects, getData, { suspense: true });
+  const { data, error, isValidating, isLoading } = useSWR<ProjectApiResponse>(endPoints.user.UserProjects, getData, { suspense: true });
 
-  return { data: data?.data, error, isValidating, isLoading };
+  return { data, error, isValidating, isLoading };
 };
