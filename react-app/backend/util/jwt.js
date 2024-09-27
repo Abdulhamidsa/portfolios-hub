@@ -1,36 +1,35 @@
 import jwt from 'jsonwebtoken'
+
+const JWT_SECRET = process.env.JWT_ACCESSTOKEN
+
 export const generateNewToken = (user) => {
-    return jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: '5m',
+    const payload = { id: user._id }
+    return jwt.sign(payload, JWT_SECRET, {
+        expiresIn: process.env.JWT_ACCESS_EXPIRATION || '1d', // 1 day for testing
     })
 }
-export const verifyToken = (token) =>
-    new Promise((resolve, reject) => {
-        jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
-            if (err) {
-                console.error('Token verification error:', err.message)
-                return reject(err)
-            }
-            resolve(payload)
-        })
-    })
-export const generateRefreshToken = (user) => {
-    return jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: '7d',
-    })
-}
-export const refreshAccessToken = async (req, res) => {
-    const refreshToken = req.cookies.refreshToken
-    if (!refreshToken) {
-        return getErrorResponse('Refresh token not found', 404)(res)
+
+export const verifyToken = async (token) => {
+    if (!token) {
+        throw { message: 'Token is required', status: 401 }
     }
+
     try {
-        const payload = await verifyToken(refreshToken)
-        const newAccessToken = generateNewToken({ _id: payload.id })
-        res.cookie('accessToken', newAccessToken, { httpOnly: true, secure: true, path: '/' })
-        return getSuccessResponse({ accesstoken: newAccessToken }, 200)(res)
-    } catch (error) {
-        console.error('Error refreshing access token:', error)
-        return getErrorResponse('Invalid or expired refresh token', 403)(res)
+        return await jwt.verify(token, JWT_SECRET)
+    } catch (err) {
+        const errorMessages = {
+            JsonWebTokenError: 'Invalid token',
+            TokenExpiredError: 'Token has expired',
+        }
+
+        const message = errorMessages[err.name] || 'Token verification failed'
+        throw { message, status: 401 }
     }
+}
+
+export const generateRefreshToken = (user) => {
+    const payload = { id: user._id }
+    return jwt.sign(payload, JWT_SECRET, {
+        expiresIn: process.env.JWT_REFRESH_EXPIRATION || '1d',
+    })
 }
