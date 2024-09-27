@@ -23,7 +23,7 @@ export default function ProjectCard() {
   }
   return (
     <div className="w-full flex flex-wrap gap-4">
-      {data?.map((item: ProjectItem) => (
+      {data?.data.map((item: ProjectItem) => (
         <div key={item._id} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5">
           <Card className="overflow-hidden">
             <CardHeader className="p-0">
