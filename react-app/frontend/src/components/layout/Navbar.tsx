@@ -1,3 +1,4 @@
+import SignOutButton from "../auth/SignoutButton";
 import { VisuallyHidden } from "../ui/VisuallyHidden";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import SigninForm from "@/components/auth/SigninForm";
@@ -47,12 +48,12 @@ export function Navbar() {
       </Sheet>
       <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
         <div className="w-full flex-1 md:w-auto md:flex-none">
-          <Dialog open={activeForm === "auth"} onOpenChange={(isOpen) => isOpen || setActiveForm(null)}>
+          <Dialog open={activeForm === "signin"} onOpenChange={(isOpen) => isOpen || setActiveForm(null)}>
             <VisuallyHidden>
               <DialogTitle></DialogTitle>
             </VisuallyHidden>
             <DialogTrigger asChild>
-              <Button className="hidden md:inline-flex" onClick={() => toggleForm("auth")}>
+              <Button className="hidden md:inline-flex" onClick={() => toggleForm("signin")}>
                 Sign In
               </Button>
             </DialogTrigger>
@@ -109,9 +110,12 @@ function MobileNav({ toggleForm }: { toggleForm: (formType: string | null) => vo
         </Button>
       </SheetClose>
       <SheetClose asChild>
-        <Button className="w-fit" onClick={() => toggleForm("auth")}>
+        <Button className="w-fit" onClick={() => toggleForm("signin")}>
           Sign In
         </Button>
+      </SheetClose>
+      <SheetClose asChild>
+        <SignOutButton />
       </SheetClose>
     </div>
   );
