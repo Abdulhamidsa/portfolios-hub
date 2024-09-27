@@ -3,7 +3,7 @@ import { requiredFields } from '../config/register.data.config.js'
 import bcrypt from 'bcryptjs'
 import { getSuccessResponse, getErrorResponse } from '../util/api.response.js'
 import { signinService } from '../services/auth.service.js'
-import { checkAuthenticationService } from '../services/auth.service.js'
+import { signoutService } from '../services/auth.service.js'
 export const signup = async (req, res) => {
     const { firstName, lastName, username, dateOfBirth, email, mobile, userId } = req.body
     for (const { field, required, message } of requiredFields) {
@@ -55,18 +55,16 @@ export const signin = async (req, res) => {
         return getSuccessResponse(res, 200, signIn)
     } catch (error) {
         console.error(error)
-        return getErrorResponse(res, error.status || 500, error.message || 'an error occurred')
+        return getErrorResponse(res, error.status || 500, error.message)
     }
 }
-// check authentication handler
-export const checkAuthentication = async (req, res, next) => {
+// signout handler
+export const signout = async (req, res) => {
     try {
-        await checkAuthenticationService(req)
-        // continue to the next middleware
-        next()
+        const signout = await signoutService(req)
+        return getSuccessResponse(res, 200, signout)
     } catch (error) {
-        if (error.message !== 'Token has expired. Please log in again.') {
-        }
-        return getErrorResponse(res, error.status || 401, error.message || 'An error occurred')
+        console.error(error)
+        return getErrorResponse(res, error.status || 500, error.message)
     }
 }
