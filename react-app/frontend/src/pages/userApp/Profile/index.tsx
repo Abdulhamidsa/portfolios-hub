@@ -1,7 +1,7 @@
 import ProjectCard from "@/components/ProjectCard";
 import ErrorBoundary from "@/lib/ErrorBoundary";
 
-function Auth() {
+function Profile() {
   return (
     <>
       <ErrorBoundary>
@@ -11,4 +11,4 @@ function Auth() {
   );
 }
 
-export default Auth;
+export default Profile;
