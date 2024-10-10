@@ -1,11 +1,22 @@
 import apiClient from "@/api/axiosConfig";
 import { endPoints } from "@/config/apiEndpoints";
+import { useAuth } from "@/context/authContext";
 
 export const useSignIn = () => {
-  const signIn = async (data) => {
+  const { login, logout } = useAuth();
+
+  type SignInData = {
+    email: string;
+    password: string;
+  };
+
+  const signIn = async (data: SignInData) => {
     try {
       const response = await apiClient.post(endPoints.auth.signin, data);
+      console.log(response);
       if (response?.data?.result) {
+        const userData = response.data.result;
+        login(userData);
         return {
           result: true,
           message: response?.data?.message || "Login successful!",
@@ -28,10 +39,14 @@ export const useSignIn = () => {
 };
 
 export const useSignOut = () => {
+  const { logout } = useAuth();
+
   const signOut = async () => {
     try {
       const response = await apiClient.post(endPoints.auth.logout);
       if (response?.data?.result) {
+        const userData = response.data.result;
+        logout(userData);
         return {
           result: true,
           message: response?.data?.message || "Logout successful!",
