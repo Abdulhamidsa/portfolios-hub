@@ -1,30 +1,25 @@
-import Auth from "@/pages/Auth";
-import Contact from "@/pages/Contact";
-import Home from "@/pages/Homepage";
-
-// import ProtectedRoute from "@/routes/ProtectedRoutes";
-
-// Ensure the correct import path
+import GuestApp from "@/pages/guestApp";
+import UserApp from "@/pages/userApp";
+import Profile from "@/pages/userApp/Profile";
 
 interface RouteConfig {
   path: string;
   element: JSX.Element;
   label: string;
-  protected?: boolean;
 }
 
-export const routes: RouteConfig[] = [
-  { path: "/", element: <Home />, label: "Home" },
-  { path: "/contact", element: <Contact />, label: "Contact", protected: true },
-  { path: "/auth", element: <Auth />, label: "Auth" },
+export const authRoutes: RouteConfig[] = [
+  { path: "/auth", element: <UserApp />, label: "User Dashboard" }, // Authenticated route
+  { path: "/profile", element: <Profile />, label: "Profile" }, // Authenticated route
 ];
 
-export const navItems = routes.map((route) => ({
+// Define the route configuration for guest users
+export const guestRoutes: RouteConfig[] = [
+  { path: "/guest", element: <GuestApp />, label: "Guest Home" }, // Guest route
+];
+
+// Optionally map the nav items
+export const navItems = [...authRoutes, ...guestRoutes].map((route) => ({
   path: route.path,
   label: route.label,
 }));
-
-// export const renderRoutes = routes.map((route) => ({
-//   path: route.path,
-//   element: route.protected ? <ProtectedRoute element={route.element} /> : route.element,
-// }));

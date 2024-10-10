@@ -1,4 +1,11 @@
-// helper function to wrapp all the protected routes
-// first it should check if the user is authenticated or not
-// if the user is authenticated then it should render the component
-// if the user is not authenticated then it should redirect the user to the login page
+// import { useAuth } from "@/context/authContext";
+import { Navigate, Outlet } from "react-router-dom";
+
+const ProtectedRoute = () => {
+  //   const { isAuthenticated } = useAuth();
+  const isAuthenticated = false;
+
+  return isAuthenticated ? <Outlet /> : <Navigate to="/guest" />;
+};
+
+export default ProtectedRoute;
