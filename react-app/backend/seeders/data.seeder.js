@@ -47,6 +47,7 @@ const predefinedTags = [
     'tailwind',
     'sass',
 ]
+
 const generateUserData = (count) => {
     return Array.from({ length: count }).map(() => ({
         personalInfo: {
@@ -62,7 +63,7 @@ const generateUserData = (count) => {
             ],
         },
         friendlyId: faker.string.uuid(),
-        userType: 'user',
+        userRole: 'user',
         approved: faker.datatype.boolean(),
         active: faker.datatype.boolean(),
         createdAt: faker.date.past(),
@@ -72,7 +73,7 @@ const generateUserData = (count) => {
 
 const generateUserCredentialData = (userId) => {
     return {
-        userId: userId,
+        _id: userId,
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
         username: faker.internet.userName(),
@@ -92,7 +93,7 @@ const generateProjectsData = (count, userIds, tagIds) => {
         const numImages = faker.number.int({ min: 1, max: 5 })
         const projectImages = Array.from({ length: numImages }).map(() => faker.image.url())
         return {
-            userId: new mongoose.Types.ObjectId(faker.helpers.arrayElement(userIds)),
+            userId: new mongoose.Types.ObjectId(faker.helpers.arrayElement(userIds)), // Ensure userId is correctly assigned here
             title: faker.lorem.words(3),
             description: faker.lorem.sentences(2),
             projectUrl: faker.internet.url(),
@@ -125,7 +126,6 @@ const insertData = async () => {
         await Tag.insertMany(tags)
         const allTags = await Tag.find({}, '_id').exec()
         const tagIds = allTags.map((tag) => tag._id.toString())
-
         const users = generateUserData(10)
         await User.insertMany(users)
 
@@ -156,5 +156,4 @@ const seed = async () => {
         process.exit(1)
     }
 }
-
 seed()
