@@ -1,15 +1,17 @@
-const getSuccessResponse = (res, status, data) => {
-    res.status(status).json({
+const getSuccessResponse = (data, message) => {
+    return {
         result: true,
+        message,
         data,
-    })
+    }
 }
 
-const getErrorResponse = (res, status, message) => {
-    res.status(status).json({
+const getErrorResponse = (message) => {
+    return {
         result: false,
+
         message,
-    })
+    }
 }
 
 export { getSuccessResponse, getErrorResponse }
