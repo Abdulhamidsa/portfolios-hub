@@ -3,23 +3,19 @@ import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 import cors from 'cors'
-import z from 'zod'
 import rateLimit from 'express-rate-limit'
-import { validZod } from './util/validation.js'
 import expressListRoutes from 'express-list-routes'
 import { connect } from './util/db.js'
 import { SECRETS } from './util/config.js'
-// import { upload } from './util/upload.js'
-// import { forgotPassword } from './src/controllers/user.controllers.js'
-// import UserRouter from './src/routes/user/user.router.js'
-import getUserRoute from './src/routes/user/route.get.user.js'
+import corsOptions from './config/cors.js'
+import publicUserRouter from './src/routes/user/user.routes.js'
 import publicProjectRouter from './src/routes/project/project.routes.public.js'
-import privateProjectRouter from './src/routes/project/project.route.private.js'
-import usersRouter from './src/routes/user/route.auth.user.js'
-
-// import { refreshAccessToken } from './src/controllers/refresh.token.js'
+import privateProjectRouter from './src/routes/project/project.routes.private.js'
+import authRouter from './src/routes/auth/auth.routes.js'
+import bodyParser from 'body-parser'
+import expressErrorMiddleware from './middleware/errorMiddleware.js'
+import 'express-async-errors'
 const app = express()
-
 const limiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
     max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
@@ -27,11 +23,9 @@ const limiter = rateLimit({
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
 app.use(cookieParser())
-
-// Apply the rate limiting middleware to all requests
+app.use(bodyParser.json())
 app.use(limiter)
 app.use(morgan('dev'))
-
 app.use(helmet())
 app.use((req, res, next) => {
     res.set('X-XSS-Protection', '1; mode=block')
@@ -42,64 +36,17 @@ app.use((req, res, next) => {
 app.use(helmet.hidePoweredBy())
 app.use(json())
 app.use(urlencoded({ extended: true }))
-
-// Configure CORS to allow requests from a specific domain
-const corsOptions = {
-    origin: 'http://localhost:5173',
-    credentials: true,
-    optionsSuccessStatus: 200,
-}
 app.use(cors(corsOptions))
-
 // Endpoint shows Server Running
 app.get('/', (req, res) => {
     res.json('Server is Running')
 })
-app.use('/auth', usersRouter)
-app.use('/user', getUserRoute)
+
+app.use('/auth', authRouter)
+app.use('/user', publicUserRouter)
 app.use('/projects', publicProjectRouter)
-app.use('/user', privateProjectRouter)
-// app.use('/auth', refreshAccessToken)
-// app.use('/users/:friendlyId', getUserRoute)
-
-// // Util single file upload API
-// app.post('/upload', upload.single('file'), (req, res) => res.send({ imageURL: req.file.path }))
-
-// // User CRUD APIs
-// app.use('/api/user', UserRouter)
-
-// // Change Password without login
-// app.put('/changePassword', forgotPassword)
-
-// Admin auth
-// app.post('/admin-register', userModel, adminSignUp);
-// app.post('/admin-login', userModel, adminSignin);
-
-/**
- * Validation Test - this is an example on how to validate variable sent to the backend
- * This test and validates that all expected parameters is present and is of the correct type
- *
- * @usage http://localhost:8080/test-validation/123
- *
- * @param testid
- *
- */
-
-const schema = z.object({
-    testid: z
-        .string({ required_error: 'testid is required' })
-        .min(3, 'testid must be at least 3 characters')
-        .max(10, 'testid must be at most 10 characters'),
-})
-
-app.get('/test-validation/:testid', validZod(schema, 'params'), (req, res, next) => {
-    //
-    // No need to have any validation or checks to make sure if the testid is valid or exists
-    //
-    const testid = req.params.testid
-
-    res.json({ message: 'Validation Test Passed', testid: testid })
-})
+app.use('/:friendlyId/projects', privateProjectRouter)
+app.use(expressErrorMiddleware)
 
 export const start = async () => {
     try {
@@ -114,3 +61,22 @@ export const start = async () => {
         console.error(e)
     }
 }
+
+// app.use(function (req, res) {
+//     res.status(400)
+// })
+
+// app.use(function (req, res, next) {
+//     res.status(404).json({ error: 'Not found' })
+// })
+
+// app.use(function (error, req, res, next) {
+//     const statusCode = error.status || 500
+//     const message = error.message || 'Something went wrong!'
+//     res.status(statusCode).json({ error: message })
+// })
+
+// app.use(function (error, req, res, next) {
+//     console.error(error.stack)
+//     res.status(500).json({ error: 'Something went wrong!' })
+// })
