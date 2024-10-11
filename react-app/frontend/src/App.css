@@ -3,7 +3,8 @@
   margin: 0 auto;
   /* padding: 2rem; */
   text-align: center;
-  background: #fff;
+  background: #212121;
+  color: #fff;
   min-height: 100dvh;
   min-height: 100vh;
 }
