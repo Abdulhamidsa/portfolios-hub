@@ -32,7 +32,7 @@ type FormData = {
 };
 const signupApi = async (data: FormData): Promise<{ success: boolean; message: string }> => {
   try {
-    const response = await fetch(endPoints.auth.register, { method: "POST", body: JSON.stringify(data), headers: { "Content-Type": "application/json" } });
+    const response = await fetch(endPoints.user.auth.register, { method: "POST", body: JSON.stringify(data), headers: { "Content-Type": "application/json" } });
 
     const result = await response.json();
 
