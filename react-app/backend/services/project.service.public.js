@@ -6,6 +6,6 @@ export const fetchAllProjects = async () => {
         const projects = await Project.find()
         return projects
     } catch (error) {
-        throw { message: 'An error occurred while fetching projects from the database' }
+        throw new AppError('An error occurred while fetching projects', 500)
     }
 }
