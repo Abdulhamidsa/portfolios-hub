@@ -16,7 +16,9 @@ export type ProjectItem = {
 type ProjectApiResponse = ApiResponse<ProjectItem[]>;
 
 export const useProject = () => {
-  const { data, error, isValidating, isLoading } = useSWR<ProjectApiResponse>(endPoints.user.UserProjects, getData, { suspense: true });
+  const { data, error, isValidating, isLoading } = useSWR<ProjectApiResponse>(endPoints.project.private.getById, getData, {
+    suspense: true,
+  });
 
   return { data, error, isValidating, isLoading };
 };
