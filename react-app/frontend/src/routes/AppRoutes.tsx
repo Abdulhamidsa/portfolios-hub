@@ -12,7 +12,6 @@ function AppRoutes() {
       {isAuthenticated ? (
         <UserLayout>
           <Routes>
-            {/* Map authenticated routes */}
             {authRoutes.map(({ path, element }) => (
               <Route key={path} path={path} element={element} />
             ))}
@@ -22,7 +21,6 @@ function AppRoutes() {
       ) : (
         <GuestLayout>
           <Routes>
-            {/* Map guest routes */}
             {guestRoutes.map(({ path, element }) => (
               <Route key={path} path={path} element={element} />
             ))}

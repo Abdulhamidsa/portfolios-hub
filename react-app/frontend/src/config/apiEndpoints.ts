@@ -1,5 +1,5 @@
 export const baseUrl = import.meta.env.VITE_API_BASE_URL;
-export const endPoints = {
+const endPoints = {
   frontpage: {
     projects: baseUrl + "/projects/all",
   },
@@ -14,7 +14,7 @@ export const endPoints = {
     profile: baseUrl + "/user/profile",
     updateProfile: baseUrl + "/user/update-profile",
     changePassword: baseUrl + "/user/change-password",
-    UserProjects: baseUrl + "/user/:friendlyId/projects/all",
+    UserProjects: baseUrl + "/projects/all",
   },
   project: {
     create: baseUrl + "/project/create",
@@ -22,5 +22,6 @@ export const endPoints = {
     delete: baseUrl + "/project/delete",
     getById: baseUrl + "/project/get",
   },
-} as const;
+};
+export default endPoints;
 // as const to tell typescript that this object is readonly and should not be modified

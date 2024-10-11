@@ -14,8 +14,7 @@ const GuestApp = () => {
   return (
     <div className="relative h-dvh flex items-center justify-center">
       <img src="/guestMain.png" alt="Full page background" className="absolute inset-0 w-full h-full object-cover z-0" />
-
-      <Card className="z-10 w-full max-w-4xl mx-auto overflow-hidden">
+      <Card className=" z-10 h-fit w-full max-w-4xl mx-auto overflow-hidden">
         <div className="flex flex-col md:flex-row">
           <div className="md:w-1/2 p-6 md:p-8">
             <CardHeader className="p-0 mb-6">

@@ -22,6 +22,7 @@ export const handleUploadProjects = async (req, res) => {
 }
 // fetch user projects
 export const handleFetchUserProjects = async (req, res) => {
+    console.log('fetching user projects', req.user)
     try {
         const projects = await fetchUserProjects(req)
         return getSuccessResponse(res, 200, projects)

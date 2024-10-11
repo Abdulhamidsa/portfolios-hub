@@ -1,5 +1,5 @@
 import apiClient from "@/api/axiosConfig";
-import { endPoints } from "@/config/apiEndpoints";
+import endPoints from "@/config/apiEndpoints";
 import { useAuth } from "@/context/authContext";
 
 export const useSignIn = () => {

@@ -12,7 +12,7 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export default function ProjectCard() {
-  const { data, error } = useProject();
+  const { data } = useProject();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
 
@@ -20,10 +20,6 @@ export default function ProjectCard() {
     setSelectedProject(project);
     setIsOpen(true);
   };
-
-  if (error) {
-    return <p className="text-center text-red-500">Error: {error.message}</p>;
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">

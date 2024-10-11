@@ -3,7 +3,7 @@ import { VisuallyHidden } from "@/components/ui/VisuallyHidden";
 import { Button } from "@/components/ui/button";
 import { DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { navItems } from "@/routes/routes";
+import { authRoutes } from "@/routes/routes";
 import { Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -16,7 +16,7 @@ export default function Navbar() {
           <span className="hidden font-bold sm:inline-block">ACME Inc</span>
         </Link>
         <nav className="flex items-center space-x-6 text-sm font-medium">
-          {navItems.map((item) => (
+          {authRoutes.map((item) => (
             <Link key={item.path} to={item.path} className="transition-colors hover:text-foreground/80 text-foreground/60">
               {item.label}
             </Link>

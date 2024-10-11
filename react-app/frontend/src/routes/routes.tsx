@@ -1,6 +1,7 @@
 import GuestApp from "@/pages/guestApp";
-import UserApp from "@/pages/userApp";
+// import Auth from "@/pages/guestApp/";
 import Profile from "@/pages/userApp/Profile";
+import Projects from "@/pages/userApp/Projects";
 
 interface RouteConfig {
   path: string;
@@ -9,17 +10,9 @@ interface RouteConfig {
 }
 
 export const authRoutes: RouteConfig[] = [
-  { path: "/auth", element: <UserApp />, label: "User Dashboard" }, // Authenticated route
-  { path: "/profile", element: <Profile />, label: "Profile" }, // Authenticated route
+  { path: "/Profile", element: <Profile />, label: "Profile" },
+  { path: "/Projects", element: <Projects />, label: "Projects" },
+  // { path: "/auth", element: <Auth />, label: "Auth" },
 ];
 
-// Define the route configuration for guest users
-export const guestRoutes: RouteConfig[] = [
-  { path: "/guest", element: <GuestApp />, label: "Guest Home" }, // Guest route
-];
-
-// Optionally map the nav items
-export const navItems = [...authRoutes, ...guestRoutes].map((route) => ({
-  path: route.path,
-  label: route.label,
-}));
+export const guestRoutes: RouteConfig[] = [{ path: "/guest", element: <GuestApp />, label: "Guest Home" }];

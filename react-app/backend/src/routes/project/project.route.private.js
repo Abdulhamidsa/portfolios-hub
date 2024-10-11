@@ -11,7 +11,7 @@ const router = Router()
 // upload project
 router.post('/:friendlyId/projects/upload', checkAuthentication, handleUploadProjects)
 // user projects route
-router.get('/:friendlyId/projects/all', checkAuthentication, handleFetchUserProjects)
+router.get('/:friendlyId/projects/all', handleFetchUserProjects)
 // edit project
 router.put('/:friendlyId/projects/:projectId', checkAuthentication, handleEditProject)
 // delete project

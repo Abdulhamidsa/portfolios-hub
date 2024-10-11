@@ -11,9 +11,7 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
         <Navbar />
       </header>
       <main>{children}</main>
-      <footer>
-        <p>User Footer</p>
-      </footer>
+      <footer></footer>
     </div>
   );
 };

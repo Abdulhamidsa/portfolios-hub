@@ -1,4 +1,4 @@
-import { endPoints } from "@/config/apiEndpoints";
+import endPoints from "@/config/apiEndpoints";
 import { getData, ApiResponse } from "@/services/api";
 import useSWR from "swr";
 

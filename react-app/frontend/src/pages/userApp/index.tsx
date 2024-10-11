@@ -1,5 +1,5 @@
 const UserApp = () => {
-  return <h1>W</h1>;
+  return <h1>Welcome User</h1>;
 };
 
 export default UserApp;
