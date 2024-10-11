@@ -54,7 +54,7 @@ export const signinHandler = async (req, res, next) => {
     try {
         const { email, password } = req.body
         const data = { email, password }
-        const { accessToken, refreshToken } = await signinService(data)
+        const { accessToken, refreshToken, isAuthorized } = await signinService(data)
         res.cookie('accessToken', accessToken, {
             httpOnly: process.env.HTTP_ONLY,
             secure: process.env.SECURE,
@@ -66,6 +66,13 @@ export const signinHandler = async (req, res, next) => {
             httpOnly: process.env.HTTP_ONLY,
             secure: process.env.SECURE,
             maxAge: process.env.REFRESH_TOKEN_EXPIRY || 604800000, // 7 days
+            path: '/',
+            sameSite: 'Strict',
+        })
+        res.cookie('isAuthorized', 'true', {
+            httpOnly: false,
+            secure: false,
+            maxAge: process.env.ACCESS_TOKEN_EXPIRY || 900000, // 15 minutes
             path: '/',
             sameSite: 'Strict',
         })

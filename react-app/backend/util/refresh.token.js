@@ -6,7 +6,7 @@ import { User } from '../src/models/user.model.js'
 export const refreshTokens = async (req, res, next) => {
     const { refreshToken } = req.cookies
     if (!refreshToken) {
-        return res.json(getErrorResponse('No refresh token provided.'))
+        return res.status(403).json(getErrorResponse('No refresh token provided.'))
     }
     try {
         const payload = await verifyToken(refreshToken, 'refresh')
@@ -23,11 +23,32 @@ export const refreshTokens = async (req, res, next) => {
             friendlyId: user.friendlyId,
             userRole: user.userRole,
         }
-        const accessToken = generateAccessToken(accessTokenPayload)
+        const newAccessToken = generateAccessToken(accessTokenPayload)
         const newRefreshToken = generateRefreshToken({ id: userCredential._id })
-        res.cookie('accessToken', accessToken, { httpOnly: true })
-        res.cookie('refreshToken', newRefreshToken, { httpOnly: true })
-        req.accessToken = accessToken
+
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: process.env.HTTP_ONLY,
+            secure: process.env.SECURE,
+            maxAge: process.env.REFRESH_TOKEN_EXPIRY || 604800000, // 7 days
+            path: '/',
+            sameSite: 'Strict',
+        })
+        res.cookie('accessToken', newAccessToken, {
+            httpOnly: process.env.HTTP_ONLY,
+            secure: process.env.SECURE,
+            maxAge: process.env.ACCESS_TOKEN_EXPIRY || 900000, // 15 minutes
+            path: '/',
+            sameSite: 'Strict',
+        })
+        res.cookie('isAuthenticated', 'true', {
+            httpOnly: false,
+            secure: false,
+            maxAge: process.env.ACCESS_TOKEN_EXPIRY || 900000, // 15 minutes
+            path: '/',
+            sameSite: 'Strict',
+        })
+
+        req.accessToken = newAccessToken
         req.refreshToken = newRefreshToken
         next()
     } catch (error) {
