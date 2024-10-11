@@ -1,17 +1,36 @@
-import { verifyToken, generateNewToken } from './jwt.js'
+import { verifyToken, generateAccessToken, generateRefreshToken } from '../util/jwt.js'
 import { getSuccessResponse, getErrorResponse } from '../util/api.response.js'
-export const refreshAccessToken = async (req, res) => {
-    const refreshToken = req.cookies.refreshToken
+import { Credential } from '../src/models/credential.model.js'
+import { User } from '../src/models/user.model.js'
+
+export const refreshTokens = async (req, res, next) => {
+    const { refreshToken } = req.cookies
     if (!refreshToken) {
-        return getErrorResponse(res, 500, 'Refresh token not found')
+        return res.json(getErrorResponse('No refresh token provided.'))
     }
     try {
-        const payload = await verifyToken(refreshToken)
-        const newAccessToken = generateNewToken({ _id: payload.id })
-        res.cookie('accessToken', newAccessToken, { httpOnly: false, secure: true, maxAge: 5 * 60 * 1000, path: '/' })
-        return getSuccessResponse(res, 200, 'Access token refreshed')
+        const payload = await verifyToken(refreshToken, 'refresh')
+        const userCredential = await Credential.findById(payload.id)
+        if (!userCredential) {
+            return res.json(getErrorResponse('User not found in credentials.'))
+        }
+        const user = await User.findById(userCredential.id)
+        if (!user) {
+            return res.json(getErrorResponse('User not found in users.'))
+        }
+        const accessTokenPayload = {
+            id: userCredential._id,
+            friendlyId: user.friendlyId,
+            userRole: user.userRole,
+        }
+        const accessToken = generateAccessToken(accessTokenPayload)
+        const newRefreshToken = generateRefreshToken({ id: userCredential._id })
+        res.cookie('accessToken', accessToken, { httpOnly: true })
+        res.cookie('refreshToken', newRefreshToken, { httpOnly: true })
+        req.accessToken = accessToken
+        req.refreshToken = newRefreshToken
+        next()
     } catch (error) {
-        console.error(error)
-        return getErrorResponse(res, 500, 'Server error. Please try again later.')
+        return res.json(getErrorResponse(error.message))
     }
 }
