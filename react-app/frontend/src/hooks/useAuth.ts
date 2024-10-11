@@ -15,8 +15,7 @@ export const useSignIn = () => {
       const response = await apiClient.post(endPoints.user.auth.signin, data);
       console.log(response);
       if (response?.data?.result) {
-        const userData = response.data.result;
-        login(userData);
+        login();
         return {
           result: true,
           message: response?.data?.message || "Login successful!",
