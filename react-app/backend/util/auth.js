@@ -3,7 +3,8 @@ import { requiredFields } from '../config/register.data.config.js'
 import bcrypt from 'bcryptjs'
 import { getSuccessResponse, getErrorResponse } from '../util/api.response.js'
 import { signinService } from '../services/auth.service.js'
-import { signoutService } from '../services/auth.service.js'
+import { verifyToken } from '../util/jwt.js'
+
 export const signup = async (req, res) => {
     const { firstName, lastName, username, dateOfBirth, email, mobile, userId } = req.body
     for (const { field, required, message } of requiredFields) {
@@ -49,22 +50,59 @@ export const signup = async (req, res) => {
 }
 
 // signin handler
-export const signin = async (req, res) => {
+export const signinHandler = async (req, res, next) => {
     try {
-        const signIn = await signinService(req, res)
-        return getSuccessResponse(res, 200, signIn)
+        const { email, password } = req.body
+        const data = { email, password }
+        const { accessToken, refreshToken } = await signinService(data)
+        res.cookie('accessToken', accessToken, {
+            httpOnly: process.env.HTTP_ONLY,
+            secure: process.env.SECURE,
+            maxAge: process.env.ACCESS_TOKEN_EXPIRY || 900000, // 15 minutes
+            path: '/',
+            sameSite: 'Strict',
+        })
+        res.cookie('refreshToken', refreshToken, {
+            httpOnly: process.env.HTTP_ONLY,
+            secure: process.env.SECURE,
+            maxAge: process.env.REFRESH_TOKEN_EXPIRY || 604800000, // 7 days
+            path: '/',
+            sameSite: 'Strict',
+        })
+        return res.json(getSuccessResponse(accessToken))
     } catch (error) {
-        console.error(error)
-        return getErrorResponse(res, error.status || 500, error.message)
+        next(error)
     }
 }
 // signout handler
-export const signout = async (req, res) => {
+export const signout = async (req, res, next) => {
     try {
-        const signout = await signoutService(req)
-        return getSuccessResponse(res, 200, signout)
+        const accessToken = req.cookies.accessToken
+        const refreshToken = req.cookies.refreshToken
+        if (!accessToken && !refreshToken) {
+            return res.json(getSuccessResponse('User not logged in'))
+        }
+        if (accessToken && refreshToken) {
+            req.res.clearCookie('accessToken')
+            req.res.clearCookie('refreshToken')
+        }
+        return res.json(getSuccessResponse('User signed out'))
     } catch (error) {
-        console.error(error)
-        return getErrorResponse(res, error.status || 500, error.message)
+        next(error)
+    }
+}
+// required login handler and not a middleware
+export const requiredLogin = async (req, res, next) => {
+    const token = req.cookies.accessToken
+    if (!token) {
+        return res.status(401).json(getErrorResponse('Unauthorized: No access token provided'))
+    }
+    try {
+        const payload = await verifyToken(token, 'access')
+        return res.json(getSuccessResponse('user authenticated'))
+    } catch (error) {
+        if (error.message !== 'Token is invalid') {
+            console.error('Token verification error:', error)
+        }
     }
 }
