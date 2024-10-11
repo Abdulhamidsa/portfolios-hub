@@ -1,8 +1,6 @@
 import mongoose from 'mongoose'
 const { Schema, model } = mongoose
-
 import { userConfig } from '../../config/user.data.config.js'
-
 const userPeronalInfoSchema = new Schema({
     _id: 0,
     profilePicture: {
@@ -39,12 +37,13 @@ const userPeronalInfoSchema = new Schema({
 })
 const UserSchema = new Schema(
     {
+        _id: { type: Schema.Types.ObjectId },
         friendlyId: {
             type: String,
             unique: true,
         },
         personalInfo: userPeronalInfoSchema,
-        userType: {
+        userRole: {
             type: String,
             default: 'user',
         },
@@ -65,5 +64,4 @@ const UserSchema = new Schema(
     },
     { timestamps: true }
 )
-
 export const User = model('user', UserSchema)
