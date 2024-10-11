@@ -1,39 +1,44 @@
 import { Project } from '../src/models/project.model.js'
+import AppError from '../util/error.handler.js'
 
 // upload project
-export const uploadProject = async (req) => {
-    const { title, description, projectUrl, imageUrl } = req.body
-    if (!title || !description || !projectUrl || !imageUrl) {
-        throw { message: 'All fields are required', status: 400 }
-    }
+export const uploadProject = async (data) => {
+    const { title, description, projectUrl, imageUrl, userId } = data
     const newProject = {
+        userId,
         title,
         description,
         projectUrl,
         projectImage: imageUrl,
         projectThumbnail: imageUrl,
-        userId: req.user._id,
     }
     try {
         const createdProject = await Project.create(newProject)
         return createdProject
     } catch (error) {
-        throw { message: 'Aan error occurred while uploading project', status: 500 }
+        throw new AppError(error || 'An error occurred while uploading project', 500)
     }
 }
+// project exist
+// valid image
+// upload image and store in cloud storage
 
 // fetch user projects
-export const fetchUserProjects = async (req) => {
+export const fetchUserProjects = async (data) => {
+    const userId = data
+    if (!userId) {
+        throw new AppError('User ID is required', 400)
+    }
     try {
-        const projects = await Project.find({ userId: req.user._id })
+        const projects = await Project.find({ userId: userId })
         return projects
     } catch (error) {
-        throw { message: 'An error occurred while fetching user projects', status: 500 }
+        throw new AppError(error || 'An error occurred while fetching projects', 500)
     }
 }
 // delete project
-export const deleteProject = async (req) => {
-    const { projectId } = req.params
+export const deleteProject = async (data) => {
+    const { projectId } = data
     try {
         const project = await Project.findByIdAndDelete(projectId)
         if (!project) {
