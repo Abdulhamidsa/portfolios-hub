@@ -1,4 +1,4 @@
-import ThrowedError from "../components/ThrowedError";
+import ThrowedError from "../components/feedback/ThrowedError";
 import React, { Component, ReactNode } from "react";
 
 interface ErrorBoundaryProps {
