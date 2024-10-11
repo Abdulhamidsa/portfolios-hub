@@ -1,11 +1,11 @@
 import { getSuccessResponse, getErrorResponse } from '../../util/api.response.js'
 import { getUserProfileService } from '../../services/user.service.js'
 
-export const getUserProfile = async (req, res) => {
+export const handleFetchAllProjects = async (req, res) => {
     try {
-        const user = await getUserProfileService(req)
-        return getSuccessResponse(res, 200, user)
+        const user = await getUserProfileService()
+        return res.json(getSuccessResponse(user))
     } catch (error) {
-        return getErrorResponse(res, error.status || 500, error.message || 'Failed to fetch users')
+        return res.status(500).json(getErrorResponse('Failed to fetch users'))
     }
 }
