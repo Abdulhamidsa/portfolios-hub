@@ -2,11 +2,7 @@ import mongoose from 'mongoose'
 const { Schema, model } = mongoose
 
 const credentialSchema = new Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'users',
-        required: true,
-    },
+    _id: { type: Schema.Types.ObjectId },
     firstName: {
         type: String,
         required: true,
