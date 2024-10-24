@@ -138,11 +138,12 @@ export default function SignUpForm({ setIsSignIn }: { setIsSignIn: (value: boole
                     value: country,
                   }))}
                   placeholder="Select a country"
-                  onChange={(selectedOption) => field.onChange(selectedOption?.value)} // Pass only the value (string)
-                  value={preDefinedData.countries.find((option) => option.value === field.value) || null} // Set the correct value
+                  onChange={(selectedOption) => field.onChange(selectedOption?.value)}
+                  value={preDefinedData.countries.map((country) => ({ label: country, value: country })).find((option) => option.value === field.value) || null} // Match selected country with value
                 />
               )}
             />
+
             {errors.country && <p className="text-sm text-red-500">{errors.country.message}</p>}
             {preDefinedData.links.map((link, index) => (
               <div key={link} className="grid grid-cols-2 gap-2">
