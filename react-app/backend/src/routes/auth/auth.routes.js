@@ -1,12 +1,12 @@
 import { Router } from 'express'
-import { signup, signinHandler, signout, requiredLogin } from '../../../util/auth.js'
+import { signupHandler, signinHandler, signout, requiredLogin } from '../../../util/auth.js'
 import { authenticateUser } from '../../../middleware/authMiddleware.js'
 import { refreshTokens } from '../../../util/refresh.token.js'
 import { validZod } from '../../../middleware/valid.zod.js'
-import { signInSchema } from '../../../util/validations.js'
+import { signInSchema, signUpSchema } from '../../../util/validations.js'
 const router = Router()
 // user auth routes
-router.post('/register', signup)
+router.post('/register', validZod(signUpSchema, 'body'), signupHandler)
 router.post('/signin', validZod(signInSchema, 'body'), signinHandler)
 router.post('/signout', signout)
 // authentication routes

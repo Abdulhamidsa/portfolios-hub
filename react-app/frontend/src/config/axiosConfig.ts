@@ -28,10 +28,9 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       return axiosInstance(originalRequest);
     }
-    window.location.href = "/guest";
+    // window.location.href = "/";
     localStorage.clear();
     return Promise.reject(error);
   }
 );
-
 export default axiosInstance;

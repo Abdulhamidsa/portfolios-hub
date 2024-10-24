@@ -1,21 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Toast } from "@/components/ui/toast";
-import { endPoints } from "@/config/apiEndpoints";
-import { format } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { preDefinedData } from "@/config/data";
+import { useToast } from "@/hooks/use-toast";
+import { useSignUp } from "@/hooks/useAuth";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import ReactSelect from "react-select";
 
-const userConfig = {
-  predefinedProfessions: ["Developer", "Designer", "Manager", "Other"],
-  predefinedLinks: ["GitHub", "LinkedIn", "Twitter", "Portfolio"],
-};
 type FormData = {
   firstName: string;
   lastName: string;
@@ -30,26 +25,14 @@ type FormData = {
   country: string;
   links: { name: string; url: string }[];
 };
-const signupApi = async (data: FormData): Promise<{ success: boolean; message: string }> => {
-  try {
-    const response = await fetch(endPoints.auth.register, { method: "POST", body: JSON.stringify(data), headers: { "Content-Type": "application/json" } });
 
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.message || "Signup failed");
-    }
-
-    return { success: true, message: result.message || "Signup successful!" };
-  } catch (error) {
-    console.error("Signup error:", error);
-    return { success: false, message: error instanceof Error ? error.message : "An unexpected error occurred" };
-  }
-};
-
-export default function SignUpForm() {
+export default function SignUpForm({ setIsSignIn }: { setIsSignIn: (value: boolean) => void }) {
+  const { toast } = useToast();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const signUp = useSignUp();
+
   const {
     register,
     handleSubmit,
@@ -57,31 +40,34 @@ export default function SignUpForm() {
     formState: { errors },
     watch,
   } = useForm<FormData>();
-
   const watchAllFields = watch();
-
   const onSubmit: SubmitHandler<FormData> = async (data) => {
+    console.log(data);
     if (step < 3) {
       setStep(step + 1);
     } else {
       setIsSubmitting(true);
       try {
-        const response = await signupApi(data);
-        if (response.success) {
-          Toast({
-            title: "Signup Successful",
-            duration: 5000,
+        const response = await signUp(data);
+        if (response.result) {
+          toast({
+            title: "Success",
+            description: response.message,
+            duration: 3000,
           });
-          console.log("Signup successful");
+          setTimeout(() => {
+            setIsSignIn(true);
+          }, 1500);
+          console.log(data);
         } else {
-          Toast({
-            title: "Signup Failed",
-            variant: "destructive",
+          toast({
+            title: "Error",
+            description: response.message,
             duration: 5000,
           });
         }
       } catch (error) {
-        Toast({
+        toast({
           title: "Error" + (error instanceof Error ? `: ${error.message}` : ""),
           variant: "destructive",
           duration: 5000,
@@ -111,28 +97,7 @@ export default function SignUpForm() {
             {errors.username && <p className="text-sm text-red-500">{errors.username.message}</p>}
             <Input type="email" placeholder="Email" {...register("email", { required: "Email is required" })} />
             {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
-            <Input placeholder="Mobile" {...register("mobile", { required: "Mobile number is required" })} />
-            {errors.mobile && <p className="text-sm text-red-500">{errors.mobile.message}</p>}
-            <Controller
-              name="dateOfBirth"
-              control={control}
-              rules={{ required: "Date of birth is required" }}
-              render={({ field }) => (
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className={`w-full justify-start text-left font-normal ${!field.value && "text-muted-foreground"}`}>
-                      {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={field.value} onSelect={field.onChange} disabled={(date) => date > new Date() || date < new Date("1900-01-01")} initialFocus />
-                  </PopoverContent>
-                </Popover>
-              )}
-            />
-            {errors.dateOfBirth && <p className="text-sm text-red-500">{errors.dateOfBirth.message}</p>}
-            <Input type="password" placeholder="Password" {...register("password", { required: "Password is required" })} />
+            <Input type="password" autoComplete="true" placeholder="Password" {...register("password", { required: "Password is required" })} />
             {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
           </div>
         );
@@ -151,7 +116,7 @@ export default function SignUpForm() {
                     <SelectValue placeholder="Select profession" />
                   </SelectTrigger>
                   <SelectContent>
-                    {userConfig.predefinedProfessions.map((profession) => (
+                    {preDefinedData.professions.map((profession) => (
                       <SelectItem key={profession} value={profession}>
                         {profession}
                       </SelectItem>
@@ -161,12 +126,28 @@ export default function SignUpForm() {
               )}
             />
             {errors.profession && <p className="text-sm text-red-500">{errors.profession.message}</p>}
-            <Input placeholder="Country" {...register("country", { required: "Country is required" })} />
+            <Controller
+              name="country"
+              control={control}
+              rules={{ required: "Country is required" }}
+              render={({ field }) => (
+                <ReactSelect
+                  {...field}
+                  options={preDefinedData.countries.map((country) => ({
+                    label: country,
+                    value: country,
+                  }))}
+                  placeholder="Select a country"
+                  onChange={(selectedOption) => field.onChange(selectedOption?.value)} // Pass only the value (string)
+                  value={preDefinedData.countries.find((option) => option.value === field.value) || null} // Set the correct value
+                />
+              )}
+            />
             {errors.country && <p className="text-sm text-red-500">{errors.country.message}</p>}
-            {userConfig.predefinedLinks.map((link, index) => (
+            {preDefinedData.links.map((link, index) => (
               <div key={link} className="grid grid-cols-2 gap-2">
-                <Input placeholder={`${link} URL`} {...register(`links.${index}.url` as const)} />
-                <Input value={link} readOnly {...register(`links.${index}.name` as const)} />
+                <Input placeholder={`${link} URL`} {...register(`links.${index}.url`)} />
+                <Input value={link} readOnly {...register(`links.${index}.name`)} />
               </div>
             ))}
           </div>
@@ -193,20 +174,12 @@ export default function SignUpForm() {
                 <p>{watchAllFields.email}</p>
               </div>
               <div>
-                <p className="font-semibold">Mobile:</p>
-                <p>{watchAllFields.mobile}</p>
-              </div>
-              <div>
-                <p className="font-semibold">Date of Birth:</p>
-                <p>{watchAllFields.dateOfBirth ? format(watchAllFields.dateOfBirth, "PPP") : "Not set"}</p>
-              </div>
-              <div>
                 <p className="font-semibold">Profession:</p>
                 <p>{watchAllFields.profession}</p>
               </div>
               <div>
                 <p className="font-semibold">Country:</p>
-                <p>{watchAllFields.country}</p>
+                <p>{watchAllFields.country?.label || watchAllFields.country}</p>
               </div>
             </div>
             <div>
@@ -244,17 +217,8 @@ export default function SignUpForm() {
               Back
             </Button>
           )}
-          <Button type="submit" className={step === 1 ? "ml-auto" : ""} disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting...
-              </>
-            ) : step === 3 ? (
-              "Submit"
-            ) : (
-              "Next"
-            )}
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? <Loader2 className="animate-spin" /> : step < 3 ? "Next" : "Submit"}
           </Button>
         </CardFooter>
       </form>

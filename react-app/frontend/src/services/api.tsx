@@ -1,11 +1,11 @@
-import axiosInstance from "../api/axiosConfig";
+import axiosInstance from "../config/axiosConfig";
 
 export type ApiResponse<T> = {
   data: T;
   result: boolean;
   message: string;
 };
-export async function getData<T>(path: string): Promise<T> {
+export const getData = async <T,>(path: string): Promise<T> => {
   try {
     const response = await axiosInstance.get<ApiResponse<T>>(path, {
       headers: {
@@ -14,16 +14,15 @@ export async function getData<T>(path: string): Promise<T> {
     });
     return response.data.data;
   } catch (error) {
-    throw new Error(`Failed to fetch data: ${(error as Error).message}`);
+    throw new Error(`Unexpected error: ${(error as Error).message}`);
   }
-}
+};
 
-export const fetcher = async (url: string, data: object): Promise<ApiResponse<object>> => {
+export const fetcher = async <T,>(url: string, data: object): Promise<ApiResponse<T>> => {
   try {
-    const response = await axiosInstance.post(url, data);
+    const response = await axiosInstance.post<ApiResponse<T>>(url, data);
     return response.data;
   } catch (error) {
-    console.error("Fetch error:", error);
-    throw error;
+    throw new Error(`Unexpected error: ${(error as Error).message}`);
   }
 };

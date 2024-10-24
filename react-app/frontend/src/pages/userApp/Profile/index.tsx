@@ -1,100 +1,179 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { ProjectItem, useProject, useUploadProject } from "@/hooks/useFetchData";
 import { useUser } from "@/hooks/useFetchUser";
-import { CalendarDays, MapPin, Briefcase, Link as LinkIcon } from "lucide-react";
+import { projectUploadSchema } from "@/lib/validationSchemas";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { MapPin, Link as LinkIcon, Grid, Image, Heart, Calendar, Mail, Briefcase, PlusCircle } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
-export default function Profile() {
-  const { user, loading, error } = useUser();
+export default function EnhancedProfile() {
+  const { userInfo, userCredential } = useUser();
+  const { userProject } = useProject();
+  const { uploadProject } = useUploadProject();
+  const [activeTab, setActiveTab] = useState("projects");
+  const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
 
-  if (loading) {
-    return <DashboardSkeleton />;
-  }
+  const form = useForm({
+    resolver: zodResolver(projectUploadSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      projectThumbnail: "",
+      projectUrl: "",
+    },
+  });
 
-  if (error) {
-    return <div className="text-center text-red-500">{error}</div>;
-  }
+  if (!userInfo) return null;
 
-  if (!user) {
-    return <div className="text-center">No user data available</div>;
-  }
+  const onSubmit = async (values: object): Promise<void> => {
+    const response = await uploadProject(values);
+    if (response.result && Array.isArray(userProject)) {
+      userProject.push(values);
+    }
+    setIsAddProjectOpen(false);
+    form.reset();
+  };
 
   return (
-    <div className="container mx-auto p-4 dark">
-      <h1 className="text-3xl font-bold mb-6 text-primary">Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="md:col-span-2 bg-card">
-          <CardHeader>
-            <CardTitle className="text-primary">Profile Information</CardTitle>
-            <CardDescription className="text-muted-foreground">Your personal and account details</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
-              <Avatar className="w-20 h-20">
-                <AvatarImage src={user.personalInfo.profilePicture} alt={user.personalInfo.profession} />
-                <AvatarFallback>{user.personalInfo.profession[0]}</AvatarFallback>
-              </Avatar>
-              <div className="text-center sm:text-left">
-                <h2 className="text-2xl font-semibold text-primary">{user.personalInfo.profession}</h2>
-                <p className="text-muted-foreground">{user.friendlyId}</p>
+    <div className="min-h-screen bg-gray-950 text-gray-100">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <Card className="bg-gradient-to-br from-gray-900 via-gray-900 to-black rounded-2xl overflow-hidden shadow-2xl border-0 text-white text-left">
+          <CardContent className="p-8">
+            <div className="flex flex-col lg:flex-row gap-8">
+              <div className="flex-shrink-0">
+                <Avatar className="w-48 h-48 rounded-2xl border-4 border-white/20 shadow-xl">
+                  <AvatarImage src={userInfo.personalInfo.profilePicture} alt={userInfo.personalInfo.username} className="object-cover" />
+                  <AvatarFallback>{userInfo.personalInfo.username[0]}</AvatarFallback>
+                </Avatar>
+              </div>
+              <div className="flex-grow">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-start mb-6">
+                  <div>
+                    <h1 className="text-4xl font-bold mb-2">{`${userCredential?.firstName} ${userCredential?.lastName}`}</h1>
+                    <p className="text-xl text-cyan-300">@{userInfo.personalInfo.username}</p>
+                  </div>
+                </div>
+                <p className="text-lg mb-6">{userInfo.personalInfo.bio}</p>
+                <div className="grid grid-cols-2 gap-4 text-sm mb-6">
+                  <div className="flex items-center">
+                    <MapPin className="w-5 h-5 mr-2" />
+                    <span>{userInfo.personalInfo.country}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <LinkIcon className="w-5 h-5 mr-2" />
+                    <a href={userInfo.personalInfo.links[0].url} target="_blank" rel="noopener noreferrer" className="transition-colors">
+                      {userInfo.personalInfo.links[0].name}
+                    </a>
+                  </div>
+                  <div className="flex items-center">
+                    <Calendar className="w-5 h-5 mr-2 text-cyan-400" />
+                    <span>Joined {new Date(userInfo.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Mail className="w-5 h-5 mr-2 text-cyan-400" />
+                    <span>{userCredential?.email}</span>
+                  </div>
+                </div>
+                <div className="flex space-x-4 mb-6">
+                  <Badge variant="secondary" className="bg-cyan-800 text-cyan-200 hover:bg-cyan-700 px-3 py-1 text-sm">
+                    <Briefcase className="w-4 h-4 mr-2" />
+                    {userInfo.personalInfo.profession}
+                  </Badge>
+                </div>
               </div>
             </div>
-            <div className="space-y-2">
-              <p className="flex items-center text-muted-foreground">
-                <CalendarDays className="mr-2 h-4 w-4" /> Joined: {new Date(user.createdAt).toLocaleDateString()}
-              </p>
-              <p className="flex items-center text-muted-foreground">
-                <MapPin className="mr-2 h-4 w-4" /> {user.personalInfo.country}
-              </p>
-              <p className="flex items-center text-muted-foreground">
-                <Briefcase className="mr-2 h-4 w-4" /> {user.personalInfo.profession}
-              </p>
-            </div>
-            <div className="mt-4">
-              <h3 className="font-semibold mb-2 text-primary">Bio</h3>
-              <p className="text-muted-foreground">{user.personalInfo.bio}</p>
+            <Separator className="my-8 bg-white/20" />
+            <div className="flex justify-around">
+              <div className="text-center">
+                <span className="text-3xl font-bold text-cyan-300">{userProject.length}</span>
+                <p className="text-sm text-cyan-100">Projects</p>
+              </div>
+              <div className="text-center">
+                <span className="text-3xl font-bold text-cyan-300">0</span>
+                <p className="text-sm text-cyan-100">Followers</p>
+              </div>
+              <div className="text-center">
+                <span className="text-3xl font-bold text-cyan-300">0</span>
+                <p className="text-sm text-cyan-100">Following</p>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="md:col-span-3 bg-card">
-          <CardHeader>
-            <CardTitle className="text-primary">Links</CardTitle>
-            <CardDescription className="text-muted-foreground">Your professional links</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {user.personalInfo.links.map((link) => (
-                <Button key={link._id} variant="outline" className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80" asChild>
-                  <a href={link.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
-                    <LinkIcon className="mr-2 h-4 w-4" />
-                    {link.name}
-                  </a>
-                </Button>
+        {/* Tabs Section */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-12">
+          <TabsList className="w-full bg-gray-900 p-1 rounded-xl">
+            <TabsTrigger value="projects" className="flex-1 py-3 data-[state=active]:bg-cyan-800 data-[state=active]:text-cyan-100 rounded-lg transition-all">
+              <Image className="w-5 h-5 mr-2" />
+              Projects
+            </TabsTrigger>
+            <TabsTrigger value="posts" className="flex-1 py-3 data-[state=active]:bg-cyan-800 data-[state=active]:text-cyan-100 rounded-lg transition-all">
+              <Grid className="w-5 h-5 mr-2" />
+              Posts
+            </TabsTrigger>
+            <TabsTrigger value="likes" className="flex-1 py-3 data-[state=active]:bg-cyan-800 data-[state=active]:text-cyan-100 rounded-lg transition-all">
+              <Heart className="w-5 h-5 mr-2" />
+              Likes
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="posts" className="mt-8">
+            <div className="space-y-6">No Posts Yet</div>
+          </TabsContent>
+
+          <TabsContent value="projects" className="mt-8">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <Card onClick={() => setIsAddProjectOpen(true)} className="aspect-square bg-gray-900 flex items-center justify-center rounded-xl hover:opacity-80 transition-opacity cursor-pointer">
+                <PlusCircle className="w-12 h-12 text-cyan-300" />
+              </Card>
+              {Array.isArray(userProject) &&
+                userProject.map((project: ProjectItem) => (
+                  <Card key={project._id} className="aspect-square bg-gray-900 overflow-hidden rounded-xl hover:opacity-80 transition-opacity">
+                    <img src={project.projectThumbnail || "/projectPlaceHolder.png"} alt={project.title} className="w-full h-full object-cover" />
+                  </Card>
+                ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="likes" className="mt-8">
+            <Card className="aspect-square bg-gray-900 overflow-hidden rounded-xl hover:opacity-80 transition-opacity">Liked Projects Coming Soon</Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      {/* Project Upload Modal */}
+      <Dialog open={isAddProjectOpen} onOpenChange={setIsAddProjectOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Add New Project</DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {["title", "description", "projectThumbnail", "projectUrl"].map((field) => (
+                <FormItem key={field}>
+                  <FormLabel>{field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, " $1")}</FormLabel>
+                  <FormControl>{field === "description" ? <Textarea placeholder={`Enter ${field}`} {...form.register(field)} /> : <Input placeholder={`Enter ${field}`} {...form.register(field)} />}</FormControl>
+                  <FormMessage>{form.formState.errors[field]?.message}</FormMessage>
+                </FormItem>
               ))}
-            </div>
-          </CardContent>
-          <CardFooter>
-            <p className="text-sm text-muted-foreground">Last updated: {new Date(user.updatedAt).toLocaleString()}</p>
-          </CardFooter>
-        </Card>
-      </div>
-    </div>
-  );
-}
 
-function DashboardSkeleton() {
-  return (
-    <div className="container mx-auto p-4 dark">
-      <Skeleton className="w-48 h-8 mb-6 bg-muted" />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2">
-          <Skeleton className="h-[300px] w-full rounded-lg bg-muted" />
-        </div>
-        <Skeleton className="h-[300px] w-full rounded-lg bg-muted" />
-        <Skeleton className="h-[200px] w-full rounded-lg md:col-span-3 bg-muted" />
-      </div>
+              <Button type="submit" className="w-full mt-6">
+                Submit
+              </Button>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

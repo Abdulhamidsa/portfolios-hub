@@ -1,14 +1,12 @@
 import Cookies from "js-cookie";
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 type AuthContextType = {
   isAuthenticated: boolean;
   login: () => void;
   logout: () => void;
 };
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
@@ -16,24 +14,17 @@ export const useAuth = () => {
   }
   return context;
 };
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return Cookies.get("isAuthenticated") === "true";
+    return Cookies.get("isAuthorized") === "true";
   });
 
   const login = () => {
     setIsAuthenticated(true);
   };
-
   const logout = () => {
     setIsAuthenticated(false);
   };
-
-  useEffect(() => {
-    const storedAuthState = Cookies.get("isAuthenticated") === "true";
-    setIsAuthenticated(storedAuthState);
-  }, []);
 
   return <AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>;
 };

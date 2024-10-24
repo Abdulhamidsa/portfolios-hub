@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useSignOut } from "@/hooks/useAuth";
 import { LogOut } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function SignOutButton() {
   const signOut = useSignOut();
@@ -14,8 +15,11 @@ export default function SignOutButton() {
   };
 
   return (
-    <Button variant="outline" onClick={handleSignOut} className=" w-full bg-transparent">
-      <LogOut className=" h-4" />
-    </Button>
+    <Link to="/" onClick={handleSignOut}>
+      <div className="flex items-center space-x-2 bg-transparent">
+        <LogOut className=" h-4 w-4" />
+        <span>Sign Out</span>
+      </div>
+    </Link>
   );
 }

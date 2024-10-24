@@ -1,10 +1,8 @@
-import apiClient from "@/api/axiosConfig";
 import { endPoints } from "@/config/apiEndpoints";
-import { useAuth } from "@/context/authContext";
+import apiClient from "@/config/axiosConfig";
+import { useAuth } from "@/context/AuthContext";
 
 export const useSignIn = () => {
-  const { login } = useAuth();
-
   type SignInData = {
     email: string;
     password: string;
@@ -13,12 +11,10 @@ export const useSignIn = () => {
   const signIn = async (data: SignInData) => {
     try {
       const response = await apiClient.post(endPoints.user.auth.signin, data);
-      console.log(response);
       if (response?.data?.result) {
-        login();
         return {
           result: true,
-          message: response?.data?.message || "Login successful!",
+          message: response?.data?.message || "Login successful! Redirecting.... ",
         };
       } else {
         return {
@@ -35,6 +31,47 @@ export const useSignIn = () => {
   };
 
   return signIn;
+};
+
+type SignUpData = {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  mobile?: string;
+  dateOfBirth?: Date;
+  password: string;
+  profilePicture?: string;
+  bio?: string;
+  profession: string;
+  country: string;
+  links: { name: string; url: string }[];
+};
+
+export const useSignUp = () => {
+  const signUp = async (data: SignUpData) => {
+    try {
+      const response = await apiClient.post(endPoints.user.auth.register, data);
+      if (response?.data?.result) {
+        return {
+          result: true,
+          message: response?.data?.message || "Signup successful! Redirecting....",
+        };
+      } else {
+        return {
+          result: false,
+          message: response?.data?.message || "Signup failed. Please try again.",
+        };
+      }
+    } catch (error) {
+      return {
+        result: false,
+        message: error.response?.data?.message || "Signup failed due to a network error. Please try again.",
+      };
+    }
+  };
+
+  return signUp;
 };
 
 export const useSignOut = () => {

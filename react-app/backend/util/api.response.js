@@ -9,7 +9,6 @@ const getSuccessResponse = (data, message) => {
 const getErrorResponse = (message) => {
     return {
         result: false,
-
         message,
     }
 }

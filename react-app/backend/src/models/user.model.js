@@ -1,35 +1,34 @@
 import mongoose from 'mongoose'
+import { preDefinedProfessions, preDefinedLinks } from '../../config/user.data.config.js'
 const { Schema, model } = mongoose
-import { userConfig } from '../../config/user.data.config.js'
 const userPeronalInfoSchema = new Schema({
     _id: 0,
+    username: {
+        type: String,
+        unique: true,
+    },
     profilePicture: {
         type: String,
-        default: `https://avatars.dicebear.com/api/bottts/tazim.svg`,
     },
     bio: {
         type: String,
     },
     profession: {
         type: String,
-        required: true,
-        enum: userConfig.predefinedProfessions,
+        enum: preDefinedProfessions,
     },
     country: {
         type: String,
-        required: true,
     },
     links: [
         {
             name: {
                 type: String,
-                required: true,
                 trim: true,
-                enum: userConfig.predefinedLinks,
+                enum: preDefinedLinks,
             },
             url: {
                 type: String,
-                required: true,
                 trim: true,
             },
         },
@@ -56,6 +55,9 @@ const UserSchema = new Schema(
         active: {
             type: Boolean,
             default: true,
+        },
+        profilePicture: {
+            type: String,
         },
 
         deletedAt: {

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { preDefinedLinks, preDefinedProfessions } from '../config/user.data.config.js'
 // upload project schema validation
 export const projectUploadSchema = z.object({
     title: z
@@ -14,6 +15,7 @@ export const projectUploadSchema = z.object({
     projectUrl: z
         .string()
         .url({
+            required_error: 'Project URL is required',
             message: 'Project URL must be a valid URL',
         })
         .optional(),
@@ -22,7 +24,7 @@ export const projectUploadSchema = z.object({
             required_error: 'Project images are required',
         })
         .optional(),
-    projectThumbnail: z.string().optional(),
+    projectThumbnail: z.string({ required_error: 'Thumbnail is required' }).optional(),
     tags: z.array(z.string()).optional(),
 })
 // fetch project schema validation
@@ -39,6 +41,25 @@ export const projectFetchSchema = z.object({
 export const signInSchema = z.object({
     email: z.string().email('Invalid email format'),
     password: z.string().min(6, 'Password must be at least 6 characters long'),
+})
+// sign in schema validation
+
+export const signUpSchema = z.object({
+    firstName: z.string().min(1, 'First name is required'),
+    lastName: z.string().min(1, 'Last name is required'),
+    username: z.string().min(1, 'Username is required'),
+    email: z.string().email('Invalid email format'),
+    profilePicture: z.string({ required_error: 'profile picture is required' }).url('Invalid URL format'),
+    // dateOfBirth: z.string().min(1, 'Date of birth is required').isOptional(),
+    password: z.string().min(6, 'Password must be at least 6 characters long'),
+    profession: z.enum(preDefinedProfessions, { message: 'Invalid profession' }),
+    country: z.string().min(1, 'Country is required'),
+    links: z.array(
+        z.object({
+            name: z.enum(preDefinedLinks, { message: 'Invalid link name' }),
+            url: z.string().url('Invalid URL format'),
+        })
+    ),
 })
 
 // project id schema validation

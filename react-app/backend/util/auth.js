@@ -1,60 +1,22 @@
-import { Credential } from '../src/models/credential.model.js'
-import { requiredFields } from '../config/register.data.config.js'
-import bcrypt from 'bcryptjs'
 import { getSuccessResponse, getErrorResponse } from '../util/api.response.js'
-import { signinService } from '../services/auth.service.js'
+import { signinService, signupService } from '../services/auth.service.js'
 import { verifyToken } from '../util/jwt.js'
 
-export const signup = async (req, res) => {
-    const { firstName, lastName, username, dateOfBirth, email, mobile, userId } = req.body
-    for (const { field, required, message } of requiredFields) {
-        if (required && !req.body[field]) {
-            return getErrorResponse(res, 400, message)
-        }
-    }
+export const signupHandler = async (req, res, next) => {
     try {
-        const [userByMobile, userByName, userByEmail] = await Promise.all([
-            Credential.findOne({ mobile }),
-            Credential.findOne({ username }),
-            Credential.findOne({ email }),
-        ])
-
-        if (userByName || userByEmail || userByMobile) {
-            const message = userByName
-                ? 'Username is already in use'
-                : userByEmail
-                  ? 'Email is already in use'
-                  : 'Mobile number is already in use'
-
-            return getErrorResponse(res, 409, message)
-        }
-
-        const hashedPassword = await bcrypt.hash(req.body.password, 10)
-
-        const newUser = await Credential.create({
-            userId,
-            firstName,
-            lastName,
-            username,
-            dateOfBirth,
-            password: hashedPassword,
-            email,
-            mobile,
-        })
-
-        return getSuccessResponse(res, 201, newUser)
+        const data = req.body
+        await signupService(data)
+        return res.json(getSuccessResponse('User registered successfully'))
     } catch (error) {
-        console.error(error)
-        return getErrorResponse(res, 500, 'Server error. Please try again later.')
+        next(error)
     }
 }
-
 // signin handler
 export const signinHandler = async (req, res, next) => {
     try {
         const { email, password } = req.body
         const data = { email, password }
-        const { accessToken, refreshToken, isAuthorized } = await signinService(data)
+        const { accessToken, refreshToken } = await signinService(data)
         res.cookie('accessToken', accessToken, {
             httpOnly: process.env.HTTP_ONLY,
             secure: process.env.SECURE,
@@ -92,6 +54,7 @@ export const signout = async (req, res, next) => {
         if (accessToken && refreshToken) {
             req.res.clearCookie('accessToken')
             req.res.clearCookie('refreshToken')
+            req.res.clearCookie('isAuthorized')
         }
         return res.json(getSuccessResponse('User signed out'))
     } catch (error) {

@@ -10,7 +10,7 @@ export const authenticateUser = async (req, res, next) => {
     }
     try {
         const payload = await verifyToken(accessToken, 'access')
-        console.log('Payload:', payload)
+        // console.log('Payload:', payload)
         req.locals = { userId: payload.id }
         next()
     } catch (error) {

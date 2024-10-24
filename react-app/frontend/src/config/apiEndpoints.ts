@@ -13,7 +13,7 @@ export const endPoints = {
       refreshToken: `${baseUrl}/auth/refresh-tokens`,
     },
     public: {
-      projects: `${baseUrl}/user/projects/all`,
+      projects: `${baseUrl}/user/all`,
     },
     private: {
       profile: `${baseUrl}/user/profile`,
@@ -24,14 +24,14 @@ export const endPoints = {
   },
   project: {
     public: {
-      get: `${baseUrl}/projects/all`,
+      all: `${baseUrl}/projects/all`,
     },
     private: {
-      create: `${baseUrl}/project/create`,
+      create: `${baseUrl}/0000000/projects/upload`,
       update: `${baseUrl}/project/update`,
-      delete: `${baseUrl}/project/delete`,
+      delete: `${baseUrl}/00000000/projects`,
       getById: `${baseUrl}/000000/projects/all`,
+      toggleLike: `${baseUrl}/0000000/projects/like`,
     },
   },
 } as const;
-// as const to tell typescript that this object is readonly and should not be modified

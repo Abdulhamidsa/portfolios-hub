@@ -4,7 +4,6 @@ import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ThumbsUp } from "lucide-react";
 
 const ProjectsSkeleton = () => {
   return (
@@ -12,7 +11,7 @@ const ProjectsSkeleton = () => {
       <h1 className="text-3xl font-bold text-center mb-8">Featured Projects</h1>
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-1">
         {[...Array(8)].map((_, index) => (
-          <Card key={index} className="overflow-hidden h-full flex flex-col rounded-sm bg-212121 text-fff border-2 border-blue-gray-900">
+          <Card key={index} className="overflow-hidden h-full flex flex-col rounded-sm bg-212121 text-fff border-2 border-gray-900">
             <CardHeader className="p-0 overflow-hidden">
               <Skeleton className="w-full h-48" />
             </CardHeader>
@@ -28,7 +27,6 @@ const ProjectsSkeleton = () => {
             </CardContent>
             <CardFooter className="p-4 pt-0 flex justify-between items-center">
               <div className="flex items-center">
-                <ThumbsUp className="w-4 h-4 mr-1 text-blue-500" />
                 <Skeleton className="h-4 w-8" />
               </div>
             </CardFooter>
