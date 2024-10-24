@@ -54,7 +54,7 @@ export default function ProjectCard() {
 
   return (
     <div className="container mx-auto px-4 py-8 bg-gray-950 min-h-screen">
-      <h1 className="text-4xl font-bold text-center mb-12 text-gray-100">Explore Amazing Projects</h1>
+      <h1 className="text-4xl font-bold text-center mb-12 text-gray-100">Explore Projects</h1>
       {isLoading ? (
         <ProjectsSkeleton />
       ) : (
