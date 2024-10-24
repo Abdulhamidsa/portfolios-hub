@@ -1,5 +1,11 @@
 export const preDefinedLinks = ['Github', 'LinkedIn', 'CV']
-export const preDefinedProfessions = ['Software Engineer', 'Graphic Designer', 'Web Developer']
+export const preDefinedProfessions = [
+    'Software Engineer',
+    'UI/UX Designer',
+    'Web Developer',
+    'Product Designer',
+    'DevOps Engineer',
+]
 export const preDefinedTags = [
     'webDev',
     'ux/ui',
