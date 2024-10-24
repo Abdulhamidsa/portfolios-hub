@@ -31,26 +31,19 @@ export const fetchUserProjects = async (userId) => {
     }
 
     try {
-        // Step 1: Fetch projects created by the user
         const projects = await Project.find({ userId: userId })
-
-        // Step 2: Fetch like counts for each project
         const projectIds = projects.map((project) => project._id)
         const likeCounts = await Like.aggregate([
             { $match: { projectId: { $in: projectIds } } },
             { $group: { _id: '$projectId', count: { $sum: 1 } } },
         ])
-
-        // Step 3: Create a map for like counts
         const likeMap = {}
         likeCounts.forEach((like) => {
             likeMap[like._id.toString()] = like.count
         })
-
-        // Step 4: Attach like count to each project
         const projectsWithLikes = projects.map((project) => ({
             ...project.toObject(),
-            likesCount: likeMap[project._id.toString()] || 0, // Default to 0 if no likes
+            likesCount: likeMap[project._id.toString()] || 0,
         }))
 
         return projectsWithLikes
