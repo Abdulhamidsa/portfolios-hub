@@ -1,5 +1,5 @@
+import { useAuth } from "../context/AuthContext";
 import { guestRoutes, authRoutes } from "./routes";
-import { useAuth } from "@/context/AuthContext";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 function AppRoutes() {
