@@ -29,22 +29,17 @@ export const fetchUserProjects = async (userId) => {
     if (!userId) {
         throw new AppError('User ID is required', 400)
     }
-
     try {
         const projects = await Project.find({ userId: userId })
-        const projectIds = projects.map((project) => project._id)
-        const likeCounts = await Like.aggregate([
-            { $match: { projectId: { $in: projectIds } } },
-            { $group: { _id: '$projectId', count: { $sum: 1 } } },
-        ])
-        const likeMap = {}
-        likeCounts.forEach((like) => {
-            likeMap[like._id.toString()] = like.count
-        })
-        const projectsWithLikes = projects.map((project) => ({
-            ...project.toObject(),
-            likesCount: likeMap[project._id.toString()] || 0,
-        }))
+        const projectsWithLikes = await Promise.all(
+            projects.map(async (project) => {
+                const likesCount = await Like.countDocuments({ projectId: project._id })
+                return {
+                    ...project.toObject(),
+                    likesCount,
+                }
+            })
+        )
 
         return projectsWithLikes
     } catch (error) {
