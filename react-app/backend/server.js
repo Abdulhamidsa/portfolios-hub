@@ -62,6 +62,8 @@ export const start = async () => {
     }
 }
 
+export default app
+
 // app.use(function (req, res) {
 //     res.status(400)
 // })

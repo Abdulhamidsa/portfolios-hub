@@ -7,7 +7,7 @@ import { Tag } from '../src/models/tags.model.js'
 import { generateFriendlyId } from '../util/herlper.js'
 import { Credential } from '../src/models/credential.model.js'
 import { preDefinedProfessions, preDefinedLinks, preDefinedTags, countriesList } from '../config/user.data.config.js'
-dotenv.config({ path: '../.env' })
+dotenv.config({ path: '../.env.dev' })
 import dotenv from 'dotenv'
 const generateBio = (user) => {
     const templates = [

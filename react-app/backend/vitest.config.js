@@ -1,9 +1,11 @@
-import { defineConfig } from 'vite'
+//import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
     test: {
         globals: true,
         root: './src',
+        setupFiles: ['./test/setup-test.js'],
         include: ['./test/**/*.test.js'],
         coverage: {
             all: false,
