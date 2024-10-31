@@ -55,7 +55,7 @@ export default function SigninForm() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Input className="border-black/25" defaultValue="Silas_Tromp98@yahoo.com" type="email" placeholder="Email" {...register("email")} aria-invalid={errors.email ? "true" : "false"} />
+            <Input className="border-black/25" defaultValue="aboood@gmail.com" type="email" placeholder="Email" {...register("email")} aria-invalid={errors.email ? "true" : "false"} />
             {/* {errors.email && (
               <p className="text-sm text-red-500" role="alert">
                 {errors.email.message}
@@ -63,7 +63,7 @@ export default function SigninForm() {
             )} */}
           </div>
           <div className="space-y-2">
-            <Input className="border-black/25" defaultValue="5zUG9yR84c4B8iU" type="password" placeholder="Password" {...register("password")} aria-invalid={errors.password ? "true" : "false"} />
+            <Input className="border-black/25" defaultValue="Aboood166" type="password" placeholder="Password" {...register("password")} aria-invalid={errors.password ? "true" : "false"} />
             {/* {errors.password && (
               <p className="text-sm text-red-500" role="alert">
                 {errors.password.message}

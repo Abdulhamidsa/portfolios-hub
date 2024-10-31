@@ -10,7 +10,6 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const { isAuthenticated } = useAuth();
-
   return (
     <div className="container px-5 flex h-14 items-center w-full max-w-full bg-white text-black ">
       <nav className="hidden md:flex items-center text-sm font-medium w-full gap-7">
@@ -85,12 +84,6 @@ function MobileNav({ isAuthenticated }: { isAuthenticated: boolean }) {
           ))}
         </>
       )}
-
-      {/* <SheetClose asChild>
-        <div className=" ml-auto">
-          <UserProfileDropdown />
-        </div>
-      </SheetClose> */}
     </div>
   );
 }

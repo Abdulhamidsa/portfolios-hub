@@ -29,7 +29,7 @@ const projectSchema = new Schema(
         tags: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: 'tags',
+                ref: 'Tag',
             },
         ],
     },

@@ -1,7 +1,6 @@
 import { User } from '../src/models/user.model.js'
 import { Credential } from '../src/models/credential.model.js'
 import AppError from '../util/error.handler.js'
-
 export const getUserProfileService = async (userId) => {
     try {
         const userInfo = await User.findById(userId).select('-_id -__v -active -updatedAt')
@@ -18,7 +17,6 @@ export const getUserProfileService = async (userId) => {
         throw new AppError(error.message || 'Error fetching user profile', error.status || 500)
     }
 }
-
 export const editUserProfileService = async (userId, data) => {
     try {
         const updateData = {}

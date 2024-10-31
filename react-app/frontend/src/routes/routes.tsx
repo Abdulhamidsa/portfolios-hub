@@ -8,10 +8,12 @@ interface RouteConfig {
   path: string;
   element: JSX.Element;
   label?: string;
+  url?: string;
 }
+const friendlyId = ":friendlyId";
 export const authRoutes: RouteConfig[] = [
   { path: "/PortfolioHub", element: <UserApp />, label: "Home" },
-  { path: "/Profile", element: <Profile />, label: "Profile" },
+  { path: `/Profile/${friendlyId}`, element: <Profile />, label: "Profile" },
   { path: "/Projects", element: <Projects />, label: "Projects" },
   { path: "/Settings", element: <Settings /> },
 ];

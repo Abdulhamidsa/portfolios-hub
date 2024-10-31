@@ -30,7 +30,7 @@ export const fetchUserProjects = async (userId) => {
         throw new AppError('User ID is required', 400)
     }
     try {
-        const projects = await Project.find({ userId: userId })
+        const projects = await Project.find({ userId: userId }).select('-__v -userId')
         const projectsWithLikes = await Promise.all(
             projects.map(async (project) => {
                 const likesCount = await Like.countDocuments({ projectId: project._id })

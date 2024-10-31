@@ -245,13 +245,27 @@ const insertData = async () => {
 const seed = async () => {
     try {
         await connect()
-        await deleteExistingData()
-        await insertData()
-        console.log('Data seeding completed successfully')
-        process.exit(0)
+        const session = await mongoose.startSession()
+        session.startTransaction()
+
+        try {
+            await insertData({ session })
+            await deleteExistingData({ session })
+
+            await session.commitTransaction()
+            console.log('Data seeding completed successfully')
+            process.exit(0)
+        } catch (error) {
+            await session.abortTransaction()
+            console.error('Seeding failed:', error)
+            process.exit(1)
+        } finally {
+            session.endSession()
+        }
     } catch (error) {
-        console.error('Seeding failed:', error)
+        console.error('Connection failed:', error)
         process.exit(1)
     }
 }
+
 seed()

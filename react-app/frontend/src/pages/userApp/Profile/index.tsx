@@ -1,3 +1,5 @@
+import ProjectDialog from "../components/ProjectDialog";
+import ProjectCard from "@/components/cards/ProjectCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -5,10 +7,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ProjectItem, useProject, useUploadProject } from "@/hooks/useFetchData";
+import { useDialog } from "@/hooks/useDialog";
+import { ProjectItem, useProjects } from "@/hooks/useFetchData";
+import { useUploadProject } from "@/hooks/useFetchData";
 import { useUser } from "@/hooks/useFetchUser";
 import { projectUploadSchema } from "@/lib/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,12 +20,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function EnhancedProfile() {
+  const { isOpen, toggleDialog, selectedProject } = useDialog();
+
   const { userInfo, userCredential } = useUser();
-  const { userProject } = useProject();
+  const { projects } = useProjects(true);
   const { uploadProject } = useUploadProject();
   const [activeTab, setActiveTab] = useState("projects");
   const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
-
   const form = useForm({
     resolver: zodResolver(projectUploadSchema),
     defaultValues: {
@@ -32,23 +36,21 @@ export default function EnhancedProfile() {
       projectUrl: "",
     },
   });
-
-  if (!userInfo) return null;
-
   const onSubmit = async (values: object): Promise<void> => {
     const response = await uploadProject(values);
-    if (response.result && Array.isArray(userProject)) {
-      userProject.push(values);
+    if (response.result && Array.isArray(projects)) {
+      projects.push(values);
     }
     setIsAddProjectOpen(false);
     form.reset();
   };
 
+  const filterFunction = (project: ProjectItem) => project.likedByUser === true;
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <Card className="bg-gradient-to-br from-gray-900 via-gray-900 to-black rounded-2xl overflow-hidden shadow-2xl border-0 text-white text-left">
-          <CardContent className="p-8">
+      <div className=" mx-full max-w-screen-2xl m-auto ">
+        <Card className=" bg-transparent rounded-none overflow-hidden shadow-2xl border-0 text-white text-left">
+          <CardContent className="py-8">
             <div className="flex flex-col lg:flex-row gap-8">
               <div className="flex-shrink-0">
                 <Avatar className="w-48 h-48 rounded-2xl border-4 border-white/20 shadow-xl">
@@ -66,11 +68,11 @@ export default function EnhancedProfile() {
                 <p className="text-lg mb-6">{userInfo.personalInfo.bio}</p>
                 <div className="grid grid-cols-2 gap-4 text-sm mb-6">
                   <div className="flex items-center">
-                    <MapPin className="w-5 h-5 mr-2" />
+                    <MapPin className="w-5 h-5 mr-2 text-cyan-300" />
                     <span>{userInfo.personalInfo.country}</span>
                   </div>
                   <div className="flex items-center">
-                    <LinkIcon className="w-5 h-5 mr-2" />
+                    <LinkIcon className="w-5 h-5 mr-2 text-cyan-300" />
                     <a href={userInfo.personalInfo.links[0].url} target="_blank" rel="noopener noreferrer" className="transition-colors">
                       {userInfo.personalInfo.links[0].name}
                     </a>
@@ -85,71 +87,62 @@ export default function EnhancedProfile() {
                   </div>
                 </div>
                 <div className="flex space-x-4 mb-6">
-                  <Badge variant="secondary" className="bg-cyan-800 text-cyan-200 hover:bg-cyan-700 px-3 py-1 text-sm">
+                  <Badge variant="secondary" className="bg-cyan-800 text-white hover:bg-cyan-700 px-3 py-1 text-sm">
                     <Briefcase className="w-4 h-4 mr-2" />
                     {userInfo.personalInfo.profession}
                   </Badge>
                 </div>
               </div>
+              <div className="flex justify-around gap-6">
+                <div className="text-center">
+                  <span className="text-3xl font-bold text-cyan-300">{projects.length}</span>
+                  <p className="text-sm text-cyan-100">Projects</p>
+                </div>
+                <div className="text-center">
+                  <span className="text-3xl font-bold text-cyan-300">0</span>
+                  <p className="text-sm text-cyan-100">Followers</p>
+                </div>
+                <div className="text-center">
+                  <span className="text-3xl font-bold text-cyan-300">0</span>
+                  <p className="text-sm text-cyan-100">Following</p>
+                </div>
+              </div>
             </div>
-            <Separator className="my-8 bg-white/20" />
-            <div className="flex justify-around">
-              <div className="text-center">
-                <span className="text-3xl font-bold text-cyan-300">{userProject.length}</span>
-                <p className="text-sm text-cyan-100">Projects</p>
-              </div>
-              <div className="text-center">
-                <span className="text-3xl font-bold text-cyan-300">0</span>
-                <p className="text-sm text-cyan-100">Followers</p>
-              </div>
-              <div className="text-center">
-                <span className="text-3xl font-bold text-cyan-300">0</span>
-                <p className="text-sm text-cyan-100">Following</p>
-              </div>
-            </div>
+            {/* <Separator className="my-8 bg-white/20" /> */}
           </CardContent>
         </Card>
 
-        {/* Tabs Section */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-12">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-12 max-w-5xl m-auto">
           <TabsList className="w-full bg-gray-900 p-1 rounded-xl">
-            <TabsTrigger value="projects" className="flex-1 py-3 data-[state=active]:bg-cyan-800 data-[state=active]:text-cyan-100 rounded-lg transition-all">
+            <TabsTrigger value="projects" className="flex-1 py-3 data-[state=active]:bg-transparent data-[state=active]:text-cyan-100 data-[state=active]:border-b-2 data-[state=active]:border-cyan-100 rounded-sm transition-all">
               <Image className="w-5 h-5 mr-2" />
               Projects
             </TabsTrigger>
-            <TabsTrigger value="posts" className="flex-1 py-3 data-[state=active]:bg-cyan-800 data-[state=active]:text-cyan-100 rounded-lg transition-all">
+            <TabsTrigger value="posts" className="flex-1 py-3 data-[state=active]:bg-transparent data-[state=active]:text-cyan-100 data-[state=active]:border-b-2 data-[state=active]:border-cyan-100 rounded-lg transition-all">
               <Grid className="w-5 h-5 mr-2" />
               Posts
             </TabsTrigger>
-            <TabsTrigger value="likes" className="flex-1 py-3 data-[state=active]:bg-cyan-800 data-[state=active]:text-cyan-100 rounded-lg transition-all">
+            <TabsTrigger value="likes" className="flex-1 py-3 data-[state=active]:bg-transparent data-[state=active]:text-cyan-100 data-[state=active]:border-b-2 data-[state=active]:border-cyan-100 rounded-lg transition-all">
               <Heart className="w-5 h-5 mr-2" />
               Likes
             </TabsTrigger>
           </TabsList>
-
           <TabsContent value="posts" className="mt-8">
             <div className="space-y-6">No Posts Yet</div>
           </TabsContent>
-
-          <TabsContent value="projects" className="mt-8">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              <Card onClick={() => setIsAddProjectOpen(true)} className="aspect-square bg-gray-900 flex items-center justify-center rounded-xl hover:opacity-80 transition-opacity cursor-pointer">
-                <PlusCircle className="w-12 h-12 text-cyan-300" />
-              </Card>
-              {Array.isArray(userProject) &&
-                userProject.map((project: ProjectItem) => (
-                  <Card key={project._id} className="aspect-square bg-gray-900 overflow-hidden rounded-xl hover:opacity-80 transition-opacity">
-                    <img src={project.projectThumbnail || "/projectPlaceHolder.png"} alt={project.title} className="w-full h-full object-cover" />
-                  </Card>
-                ))}
-            </div>
+          <TabsContent value="projects" className="mt-8 ">
+            <Card onClick={() => setIsAddProjectOpen(true)} className=" w-full bg-gray-900 flex items-center justify-center rounded-xl hover:opacity-80 transition-opacity cursor-pointer">
+              <PlusCircle className=" text-cyan-300 p-3" />
+            </Card>
+            <ProjectCard isUserProfile={true} />
           </TabsContent>
 
           <TabsContent value="likes" className="mt-8">
-            <Card className="aspect-square bg-gray-900 overflow-hidden rounded-xl hover:opacity-80 transition-opacity">Liked Projects Coming Soon</Card>
+            <ProjectCard filterFunction={filterFunction} />
           </TabsContent>
         </Tabs>
       </div>
+      <ProjectDialog isOpen={isOpen} toggleDialog={toggleDialog} selectedProject={selectedProject} />
 
       {/* Project Upload Modal */}
       <Dialog open={isAddProjectOpen} onOpenChange={setIsAddProjectOpen}>

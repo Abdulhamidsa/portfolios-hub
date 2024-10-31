@@ -9,4 +9,4 @@ const tagsSchema = new Schema({
         required: true,
     },
 })
-export const Tag = model('Tags', tagsSchema)
+export const Tag = model('Tag', tagsSchema)
