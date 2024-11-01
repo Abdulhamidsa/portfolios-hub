@@ -30,18 +30,6 @@ export const preDefinedTags = [
     'tailwind',
     'sass',
 ]
-// export const profileImagesAttributes = {
-//     topType: ['NoHair', 'Hat', 'LongHair', 'ShortHair'],
-//     accessoriesType: ['Round', 'Sunglasses', 'Wayfarers', 'Blank'],
-//     hairColor: ['Black', 'Brown', 'Blonde', 'Red'],
-//     facialHairType: ['Beard', 'Moustache', 'Blank'],
-//     clotheType: ['Hoodie', 'Shirt', 'Suit'],
-//     eyeType: ['Happy', 'Closed', 'Surprised'],
-//     eyebrowType: ['Default', 'Raised', 'Sad'],
-//     mouthType: ['Smile', 'Sad', 'Eating'],
-//     skinColor: ['Light', 'Brown', 'Dark'],
-// }
-
 export const countriesList = [
     'Afghanistan',
     'Albania',
