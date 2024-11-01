@@ -63,22 +63,3 @@ export const start = async () => {
 }
 
 export default app
-
-// app.use(function (req, res) {
-//     res.status(400)
-// })
-
-// app.use(function (req, res, next) {
-//     res.status(404).json({ error: 'Not found' })
-// })
-
-// app.use(function (error, req, res, next) {
-//     const statusCode = error.status || 500
-//     const message = error.message || 'Something went wrong!'
-//     res.status(statusCode).json({ error: message })
-// })
-
-// app.use(function (error, req, res, next) {
-//     console.error(error.stack)
-//     res.status(500).json({ error: 'Something went wrong!' })
-// })
