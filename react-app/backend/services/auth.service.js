@@ -3,10 +3,12 @@ import { generateAccessToken, generateRefreshToken } from '../util/jwt.js'
 import { Credential } from '../src/models/credential.model.js'
 import { User } from '../src/models/user.model.js'
 import mongoose from 'mongoose'
-import { generateFriendlyId } from '../util/herlper.js'
+import { generateFriendlyId, hashPassword } from '../util/herlper.js'
 
 // import { verifyToken } from '../util/jwt.js'
 import AppError from '../util/error.handler.js'
+import { hash } from 'crypto'
+import { getSuccessResponse } from 'util/api.response.js'
 // signin service
 export const signinService = async (data) => {
     const { email, password } = data
@@ -52,19 +54,19 @@ export const signoutService = async (req) => {
 
 export const signupService = async (data) => {
     const { firstName, lastName, username, email, password, profession, country, links, profilePicture } = data
-    console.log('Data:', data)
+    const session = await mongoose.startSession()
+    session.startTransaction()
     const existingCredential = await Credential.findOne({ $or: [{ email }, { username }] })
     if (existingCredential) {
         throw new AppError('Email or username already registered', 400)
     }
     try {
-        const hashedPassword = await bcrypt.hash(password, 10)
         const newCredential = await Credential.create({
             _id: new mongoose.Types.ObjectId(),
             firstName,
             lastName,
             email,
-            password: hashedPassword,
+            password: await hashPassword(password),
         })
 
         const newUser = await User.create({
@@ -78,11 +80,7 @@ export const signupService = async (data) => {
                 profilePicture,
             },
         })
-
-        return {
-            credential: newCredential,
-            user: newUser,
-        }
+        return getSuccessResponse('User registered successfully')
     } catch (error) {
         throw new AppError(error.message || 'An error occurred while registering user', 500)
     }
