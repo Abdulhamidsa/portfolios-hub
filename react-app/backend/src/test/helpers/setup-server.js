@@ -46,8 +46,6 @@ export const disconnect = () => {
  */
 export const startServer = async () => {
     const uri = process.env.MONGO_CONNECTION_STRING
-    console.log('setup-server > uri = ', uri)
-
     return connect(uri)
         .then((result) => {
             console.log('setup-server > done = ')
