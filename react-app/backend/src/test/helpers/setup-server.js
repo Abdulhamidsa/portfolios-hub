@@ -44,19 +44,19 @@ export const disconnect = () => {
  *
  * ---------------------------------------------------------------------------------------
  */
-export const startServer = async () => {
-    const uri = process.env.MONGO_CONNECTION_STRING
-    return connect(uri)
-        .then((result) => {
-            console.log('setup-server > done = ')
-            return result
-        })
+// export const startServer = async () => {
+//     const uri = process.env.MONGO_CONNECTION_STRING
+//     return connect(uri)
+//         .then((result) => {
+//             console.log('setup-server > done = ')
+//             return result
+//         })
 
-        .catch((error) => {
-            console.log('setup-server.ts > error = ', error)
-            return Promise.reject(error)
-        })
-}
+//         .catch((error) => {
+//             console.log('setup-server.ts > error = ', error)
+//             return Promise.reject(error)
+//         })
+// }
 
 /**
  * Shutdown the database connnection after testing

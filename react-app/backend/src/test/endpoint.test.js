@@ -10,6 +10,7 @@ import { generateFriendlyId } from 'util/herlper.js'
 import { shutdownServer } from '../test/helpers/setup-server.js'
 import { Credential } from '../models/credential.model.js'
 import { endPoints } from 'util/endPoints.js'
+import { connect } from 'util/db.js'
 export const createMongooseId = () => {
     return new mongoose.Types.ObjectId()
 }
@@ -39,7 +40,7 @@ const user = {
 }
 describe('User creation and login', () => {
     beforeAll(async () => {
-        await startServer()
+        await connect()
     })
     afterAll(async () => {
         await Promise.all([User.deleteMany({}), Credential.deleteMany({})])
