@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ProjectItem } from "@/hooks/useFetchData";
+import { ProjectItem, Image } from "@/hooks/useFetchData";
 import { Heart } from "lucide-react";
 
 type DialogComponentProps = {
@@ -10,7 +10,6 @@ type DialogComponentProps = {
   selectedProject: ProjectItem | null;
   toggleLike?: (projectId: string) => void;
 };
-
 const DialogComponent: React.FC<DialogComponentProps> = ({ isOpen, toggleDialog, selectedProject, toggleLike }) => {
   if (!selectedProject) return null;
   return (
@@ -31,9 +30,9 @@ const DialogComponent: React.FC<DialogComponentProps> = ({ isOpen, toggleDialog,
         </DialogHeader>
         <Carousel className="w-full max-w-xl mx-auto">
           <CarouselContent>
-            {selectedProject.projectImage.map((image, index) => (
-              <CarouselItem key={index}>
-                <img src={image || selectedProject.projectThumbnail} alt={`${selectedProject.title} - Image ${index + 1}`} className="w-full h-64 object-cover rounded-lg" />
+            {selectedProject.projectImage.map((image: Image, index: number) => (
+              <CarouselItem key={image.id}>
+                <img src={image.url} alt={`${selectedProject.title} - Image ${index + 1}`} className="w-full h-64 object-cover rounded-lg" />
               </CarouselItem>
             ))}
           </CarouselContent>
