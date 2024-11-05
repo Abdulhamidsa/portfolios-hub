@@ -6,7 +6,7 @@ import {
     editProject,
     likeProject,
 } from '../../services/project.service.private.js'
-import { getErrorResponse, getSuccessResponse } from '../../util/api.response.js'
+import { getErrorResponse, getSuccessResponse } from '../../utils/api.response.js'
 // fetch all projects
 export const handleFetchAllProjects = async (req, res, next) => {
     const userId = req.locals.userId
@@ -19,16 +19,17 @@ export const handleFetchAllProjects = async (req, res, next) => {
 }
 // upload projects
 export const handleUploadProjects = async (req, res, next) => {
-    const { title, description, projectUrl, imageUrl, projectThumbnail } = req.body
+    const { title, description, projectUrl, projectImage, projectThumbnail, tags } = req.body
     console.log(req.body)
-    const userId = req.locals.userId
+    // const userId = req.locals.userId
     const data = {
-        userId,
+        // userId,
         title,
         description,
         projectUrl,
-        imageUrl,
+        projectImage,
         projectThumbnail,
+        tags,
     }
 
     try {
