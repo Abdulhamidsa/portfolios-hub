@@ -3,7 +3,7 @@
  */
 
 import { ZodError } from 'zod'
-import AppError from '../util/error.handler.js'
+import AppError from '../utils/error.handler.js'
 
 /**
  *

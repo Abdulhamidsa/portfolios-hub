@@ -1,10 +1,10 @@
-import { connect } from '../util/db.js'
+import { connect } from '../utils/db.js'
 import mongoose from 'mongoose'
 import { faker } from '@faker-js/faker'
 import { User } from '../src/models/user.model.js'
 import { Project } from '../src/models/project.model.js'
 import { Tag } from '../src/models/tags.model.js'
-import { generateFriendlyId } from '../util/herlper.js'
+import { generateFriendlyId } from '../utils/herlper.js'
 import { Credential } from '../src/models/credential.model.js'
 import { preDefinedProfessions, preDefinedLinks, preDefinedTags, countriesList } from '../config/user.data.config.js'
 dotenv.config({ path: '../.env.dev' })

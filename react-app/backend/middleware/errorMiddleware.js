@@ -1,4 +1,4 @@
-import { getErrorResponse } from '../util/api.response.js'
+import { getErrorResponse } from '../utils/api.response.js'
 export default function expressErrorMiddleware(error, req, res, next) {
     // console.error('errror', error.stack)
     const statusCode = error.statusCode || 500

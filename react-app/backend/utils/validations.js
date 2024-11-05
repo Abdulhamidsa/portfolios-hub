@@ -19,13 +19,13 @@ export const projectUploadSchema = z.object({
             message: 'Project URL must be a valid URL',
         })
         .optional(),
-    projectImage: z
-        .array(z.string({ required_error: 'image required' }), {
-            required_error: 'Project images are required',
+    projectImage: z.array(
+        z.object({
+            url: z.string().url({ message: 'Invalid image URL' }),
         })
-        .optional(),
+    ),
     projectThumbnail: z.string({ required_error: 'Thumbnail is required' }).optional(),
-    tags: z.array(z.string()).optional(),
+    tags: z.array(z.string()),
 })
 // fetch project schema validation
 export const projectFetchSchema = z.object({

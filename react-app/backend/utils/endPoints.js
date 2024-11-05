@@ -1,7 +1,7 @@
 const path = {
     auth: '/auth',
     user: '/user',
-    project: '/project',
+    project: '/projects',
 }
 
 export const endPoints = {
@@ -13,5 +13,12 @@ export const endPoints = {
             checkAuth: `${path.auth}/check-auth`,
             refreshTokens: `${path.auth}/refresh-tokens`,
         },
+    },
+    project: {
+        all: `${path.project}/all`,
+        upload: `/:friendlyId${path.project}/upload`,
+        like: (projectId) => `${path.project}/like/${projectId}`,
+        edit: (friendlyId, projectId) => `${path.project}/${friendlyId}/${projectId}`,
+        delete: (projectId) => `${path.project}/${projectId}`,
     },
 }

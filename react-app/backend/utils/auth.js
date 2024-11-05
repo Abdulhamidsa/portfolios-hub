@@ -1,6 +1,6 @@
-import { getSuccessResponse, getErrorResponse } from '../util/api.response.js'
+import { getSuccessResponse, getErrorResponse } from './api.response.js'
 import { signinService, signupService } from '../services/auth.service.js'
-import { verifyToken } from '../util/jwt.js'
+import { verifyToken } from './jwt.js'
 
 export const signupHandler = async (req, res, next) => {
     try {

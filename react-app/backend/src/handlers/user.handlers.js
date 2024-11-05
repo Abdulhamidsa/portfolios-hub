@@ -1,4 +1,4 @@
-import { getSuccessResponse } from '../../util/api.response.js'
+import { getSuccessResponse } from '../../utils/api.response.js'
 import { getUserProfileService, editUserProfileService, getAllUsersService } from '../../services/user.service.js'
 
 export const handleFetchUserProfile = async (req, res, next) => {

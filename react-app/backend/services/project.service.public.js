@@ -1,5 +1,5 @@
 import { Project } from '../src/models/project.model.js'
-import AppError from '../util/error.handler.js'
+import AppError from '../utils/error.handler.js'
 import { Like } from '../src/models/likes.modal.js'
 // fetch projects
 export const fetchAllProjects = async (userId) => {

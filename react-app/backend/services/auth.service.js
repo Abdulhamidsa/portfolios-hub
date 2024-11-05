@@ -1,37 +1,49 @@
+import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
-import { generateAccessToken, generateRefreshToken } from '../util/jwt.js'
+import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js'
 import { Credential } from '../src/models/credential.model.js'
 import { User } from '../src/models/user.model.js'
-import mongoose from 'mongoose'
-import { generateFriendlyId, hashPassword } from '../util/herlper.js'
-
-// import { verifyToken } from '../util/jwt.js'
-import AppError from '../util/error.handler.js'
-import { hash } from 'crypto'
-import { getSuccessResponse } from 'util/api.response.js'
+import { generateFriendlyId, hashPassword } from '../utils/herlper.js'
+import AppError from '../utils/error.handler.js'
+import { getSuccessResponse } from '../utils/api.response.js'
 // signin service
 export const signinService = async (data) => {
     const { email, password } = data
     const userCredential = await Credential.findOne({ email })
+
     if (!userCredential) {
         throw new AppError('Email not registered', 400)
     }
+
     const isPasswordValid = await bcrypt.compare(password, userCredential.password)
     if (!isPasswordValid) {
         throw new AppError('Invalid password', 400)
     }
+
     const user = await User.findById(userCredential._id)
     if (!user) {
         throw new AppError('User not found', 404)
     }
-    const payload = {
-        id: user._id,
-        userType: user.userType,
-        friendlyId: user.friendlyId,
+
+    try {
+        const payload = {
+            id: user._id,
+            userType: user.userType,
+            friendlyId: user.friendlyId,
+        }
+
+        const [accessToken, refreshToken] = await Promise.all([
+            generateAccessToken(payload),
+            generateRefreshToken(payload),
+        ])
+
+        return { accessToken, refreshToken }
+    } catch (error) {
+        console.error('Error generating tokens:', error)
+        throw new AppError(error.message || 'An error occurred while signing in', 500)
     }
-    const [accessToken, refreshToken] = await Promise.all([generateAccessToken(payload), generateRefreshToken(payload)])
-    return { accessToken, refreshToken }
 }
+
 // signout service
 export const signoutService = async (req) => {
     try {

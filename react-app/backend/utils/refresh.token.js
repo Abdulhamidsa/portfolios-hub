@@ -1,5 +1,5 @@
-import { verifyToken, generateAccessToken, generateRefreshToken } from '../util/jwt.js'
-import { getErrorResponse } from '../util/api.response.js'
+import { verifyToken, generateAccessToken, generateRefreshToken } from './jwt.js'
+import { getErrorResponse } from './api.response.js'
 import { User } from '../src/models/user.model.js'
 
 export const refreshTokens = async (req, res, next) => {

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { handleFetchUserProfile, handleEditUserProfile, handleFetchAllUsers } from '../../handlers/user.handlers.js'
 import { authenticateUser } from '../../../middleware/authMiddleware.js'
-import { refreshTokens } from '../../../util/refresh.token.js'
+import { refreshTokens } from '../../../utils/refresh.token.js'
 const router = Router()
 router.use(refreshTokens)
 router.use(authenticateUser)

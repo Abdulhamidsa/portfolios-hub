@@ -1,6 +1,6 @@
 import { User } from '../src/models/user.model.js'
 import { Credential } from '../src/models/credential.model.js'
-import AppError from '../util/error.handler.js'
+import AppError from '../utils/error.handler.js'
 export const getUserProfileService = async (userId) => {
     try {
         const userInfo = await User.findById(userId).select('-_id -__v -active -updatedAt')
