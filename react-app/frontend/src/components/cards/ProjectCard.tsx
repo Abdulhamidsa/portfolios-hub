@@ -59,7 +59,7 @@ export default function ProjectCard({ filterFunction, isUserProfile }: ProjectCa
               <Card key={project._id} className="overflow-hidden flex flex-col rounded-lg bg-gray-900 text-gray-100 border border-gray-800 hover:border-cyan-500 transition-all duration-300 shadow-lg hover:shadow-cyan-500/20 h-[400px]">
                 <CardHeader className="p-0 overflow-hidden h-48">
                   <Button variant="ghost" className="w-full h-full p-0 relative group" onClick={() => handleProjectClick(project)}>
-                    <img src={project.projectThumbnail || "/public/projectPlaceHolder.png"} alt={project.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <img src={project.projectThumbnail || "/projectPlaceHolder.png"} alt={project.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                     <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <ExternalLink className="w-8 h-8 text-white" />
                     </div>
