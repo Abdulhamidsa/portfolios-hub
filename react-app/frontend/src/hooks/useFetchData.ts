@@ -8,7 +8,10 @@ type UserProject = {
     username: string;
   };
 };
-
+export type Image = {
+  id: string;
+  url: string;
+};
 export type ProjectItem = {
   _id: string;
   title: string;
@@ -16,7 +19,7 @@ export type ProjectItem = {
   userId: UserProject;
   projectUrl: string;
   projectThumbnail: string;
-  projectImage: string[];
+  projectImage: Image[];
   tags: string[];
   createdAt: string;
   likeCount: number;
