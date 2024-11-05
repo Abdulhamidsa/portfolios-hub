@@ -19,10 +19,18 @@ const projectSchema = new Schema(
             type: String,
             required: true,
         },
-        projectImage: {
-            type: [String],
-            required: true,
-        },
+        projectImage: [
+            {
+                id: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    required: true,
+                },
+                url: {
+                    type: String,
+                    required: true,
+                },
+            },
+        ],
         projectThumbnail: {
             type: String,
         },
