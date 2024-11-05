@@ -1,16 +1,17 @@
 import { Project } from '../src/models/project.model.js'
-import AppError from '../util/error.handler.js'
+import AppError from '../utils/error.handler.js'
 import { Like } from '../src/models/likes.modal.js'
 // upload project
 export const uploadProject = async (data) => {
-    const { title, description, projectUrl, imageUrl, userId, projectThumbnail } = data
+    const { title, description, projectUrl, projectImage, userId, projectThumbnail, tags } = data
     const newProject = {
         userId,
         title,
         description,
         projectUrl,
-        projectImage: imageUrl,
+        projectImage,
         projectThumbnail,
+        tags,
     }
     try {
         const createdProject = await Project.create(newProject)
