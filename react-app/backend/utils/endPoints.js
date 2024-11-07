@@ -15,10 +15,9 @@ export const endPoints = {
         },
     },
     project: {
-        all: `${path.project}/all`,
-        upload: `/:friendlyId${path.project}/upload`,
-        like: (projectId) => `${path.project}/like/${projectId}`,
-        edit: (friendlyId, projectId) => `${path.project}/${friendlyId}/${projectId}`,
-        delete: (projectId) => `${path.project}/${projectId}`,
+        all: `/:friendlyId${path.project}`,
+        upload: `/:friendlyId${path.project}`,
+        edit: `/:friendlyId${path.project}`,
+        delete: `/:friendlyId${path.project}`,
     },
 }
