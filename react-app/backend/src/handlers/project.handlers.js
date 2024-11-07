@@ -6,7 +6,9 @@ import {
     editProject,
     likeProject,
 } from '../../services/project.service.private.js'
-import { getErrorResponse, getSuccessResponse } from '../../utils/api.response.js'
+import { getSuccessResponse } from '../../utils/api.response.js'
+import mongoose from 'mongoose'
+
 // fetch all projects
 export const handleFetchAllProjects = async (req, res, next) => {
     const userId = req.locals.userId
@@ -20,10 +22,9 @@ export const handleFetchAllProjects = async (req, res, next) => {
 // upload projects
 export const handleUploadProjects = async (req, res, next) => {
     const { title, description, projectUrl, projectImage, projectThumbnail, tags } = req.body
-    console.log(req.body)
-    // const userId = req.locals.userId
+    const userId = req.locals.userId
     const data = {
-        // userId,
+        userId,
         title,
         description,
         projectUrl,
@@ -31,7 +32,6 @@ export const handleUploadProjects = async (req, res, next) => {
         projectThumbnail,
         tags,
     }
-
     try {
         await uploadProject(data)
         res.json(getSuccessResponse('Project uploaded successfully'))
@@ -39,7 +39,6 @@ export const handleUploadProjects = async (req, res, next) => {
         next(error)
     }
 }
-
 // fetch user projects
 export const handleFetchUserProjects = async (req, res, next) => {
     const data = req.locals.userId
@@ -52,8 +51,7 @@ export const handleFetchUserProjects = async (req, res, next) => {
 }
 // delete project
 export const handleDeleteProject = async (req, res, next) => {
-    const { projectId } = req.params
-    console.log(projectId)
+    const { projectId } = req.query
     try {
         const response = await deleteProject(projectId)
         return res.json(getSuccessResponse(response))
@@ -62,12 +60,23 @@ export const handleDeleteProject = async (req, res, next) => {
     }
 }
 // edit project
-export const handleEditProject = async (req, res) => {
+export const handleEditProject = async (req, res, next) => {
+    const { projectId } = req.query
+    const { title, description, projectUrl, projectImage, projectThumbnail, tags } = req.body
+    const data = {
+        projectId,
+        title,
+        description,
+        projectUrl,
+        projectImage,
+        projectThumbnail,
+        tags,
+    }
     try {
-        const editedProject = await editProject(req)
-        return getSuccessResponse(res, 200, editedProject)
+        const editedProject = await editProject(data)
+        return res.json(getSuccessResponse(editedProject))
     } catch (error) {
-        return getErrorResponse(res, error.status || 500, error.message)
+        next(error)
     }
 }
 // like project
