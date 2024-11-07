@@ -3,6 +3,9 @@
  */
 
 import mongoose from 'mongoose'
+import express from 'express'
+import { createMongooseId } from './mock.data.js'
+import app from '../../../server.js'
 
 const connect = (uri) => {
     if (!uri || uri === 'null') {
@@ -44,19 +47,19 @@ export const disconnect = () => {
  *
  * ---------------------------------------------------------------------------------------
  */
-// export const startServer = async () => {
-//     const uri = process.env.MONGO_CONNECTION_STRING
-//     return connect(uri)
-//         .then((result) => {
-//             console.log('setup-server > done = ')
-//             return result
-//         })
+export const startServer = async () => {
+    const uri = process.env.MONGO_CONNECTION_STRING
+    return connect(uri)
+        .then((result) => {
+            console.log('setup-server > done = ')
+            return result
+        })
 
-//         .catch((error) => {
-//             console.log('setup-server.ts > error = ', error)
-//             return Promise.reject(error)
-//         })
-// }
+        .catch((error) => {
+            console.log('setup-server.ts > error = ', error)
+            return Promise.reject(error)
+        })
+}
 
 /**
  * Shutdown the database connnection after testing
@@ -74,3 +77,18 @@ export const shutdownServer = async () => {
             return Promise.reject(error)
         })
 }
+
+// middleware to add userId to req.locals
+
+// const app = express()
+// app.use((req, res, next) => {
+//     req.locals = { userId: createMongooseId() }
+//     next()
+// })
+
+export const mockedApp = express()
+mockedApp.use((req, res, next) => {
+    req.locals = { userId: createMongooseId() }
+    next()
+})
+mockedApp.use(app)
