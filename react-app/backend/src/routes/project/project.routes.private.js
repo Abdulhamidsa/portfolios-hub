@@ -15,13 +15,14 @@ const router = Router()
 // router.use(refreshTokens)
 // router.use(authenticateUser)
 // upload project
-router.post('/upload', validZod(projectUploadSchema, 'body'), handleUploadProjects)
+router.post('/', validZod(projectUploadSchema, 'body'), handleUploadProjects)
 // user projects route
-router.get('/all', validZod(projectFetchSchema, 'query'), handleFetchUserProjects)
+router.get('/', validZod(projectFetchSchema, 'body'), handleFetchUserProjects)
 // edit project
-router.put('/:friendlyId/:projectId', validZod(queryParamsValidator, 'params'), handleEditProject)
+router.put('/', validZod(queryParamsValidator, 'query'), validZod(projectUploadSchema, 'body'), handleEditProject)
 // delete project
-router.delete('/:projectId', validZod(queryParamsValidator, 'params'), handleDeleteProject)
+router.delete('/', validZod(queryParamsValidator, 'query'), handleDeleteProject)
 // like project
 router.post('/like/:projectId', handleLikeProject)
+
 export default router
