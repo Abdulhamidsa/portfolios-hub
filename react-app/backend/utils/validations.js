@@ -1,5 +1,7 @@
 import { z } from 'zod'
 import { preDefinedLinks, preDefinedProfessions, countriesList } from '../config/user.data.config.js'
+import { ObjectId } from 'mongodb'
+
 // upload project schema validation
 export const projectUploadSchema = z.object({
     title: z
@@ -13,19 +15,18 @@ export const projectUploadSchema = z.object({
         })
         .min(10, 'Description must be at least 10 characters'),
     projectUrl: z
-        .string()
+        .string({ required_error: 'Project URL is required' })
         .url({
-            required_error: 'Project URL is required',
             message: 'Project URL must be a valid URL',
         })
         .optional(),
     projectImage: z.array(
         z.object({
-            url: z.string().url({ message: 'Invalid image URL' }),
+            url: z.string({ required_error: 'Image is required' }).url({ message: 'Invalid image URL' }),
         })
     ),
     projectThumbnail: z.string({ required_error: 'Thumbnail is required' }).optional(),
-    tags: z.array(z.string()),
+    tags: z.array(z.string({ required_error: 'Tags are required' })).optional(),
 })
 // fetch project schema validation
 export const projectFetchSchema = z.object({
@@ -39,11 +40,12 @@ export const projectFetchSchema = z.object({
 })
 // sign up schema validation
 export const signInSchema = z.object({
-    email: z.string().email('Invalid email format'),
-    password: z.string().min(6, 'Password must be at least 6 characters long'),
+    email: z.string({ required_error: 'email is required' }).email('Invalid email format'),
+    password: z
+        .string({ required_error: 'Password is required' })
+        .min(6, 'Password must be at least 6 characters long'),
 })
 // sign in schema validation
-
 export const signUpSchema = z.object({
     firstName: z.string({ required_error: 'First name is required' }),
     lastName: z.string({ required_error: 'Last name is required' }),
@@ -65,8 +67,11 @@ export const signUpSchema = z.object({
 })
 
 // project id schema validation
+const projectIdSchema = z.string({ required_error: 'ID is required' }).refine((value) => ObjectId.isValid(value), {
+    message: 'Invalid MongoDB ObjectId format',
+})
+
+// Validate query parameters for ids
 export const queryParamsValidator = z.object({
-    projectId: z.string({
-        required_error: 'Project id is required',
-    }),
+    projectId: projectIdSchema,
 })
