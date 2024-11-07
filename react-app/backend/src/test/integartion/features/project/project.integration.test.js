@@ -1,43 +1,73 @@
 import { describe, test, expect } from 'vitest'
 import request from 'supertest'
 import app from '../../../../../server.js'
-import { projectTest } from '../../../helpers/mock.data..js'
 import { connect } from '../../../../../utils/db.js'
 import { endPoints } from '../../../../../utils/endPoints.js'
 import { shutdownServer } from '../../../helpers/setup-server.js'
 import { Project } from '../../../../models/project.model.js'
+import { mockedApp } from '../../../helpers/setup-server.js'
+import { getProjectTest } from '../../../helpers/mock.data.js'
 
-// app.use('/:friendlyId/projects', privateProjectRouter)
-
-// router.post('/upload', validZod(projectUploadSchema, 'body'), handleUploadProjects)
-// // user projects route
-// router.get('/all', validZod(projectFetchSchema, 'query'), handleFetchUserProjects)
-// // edit project
-// router.put('/:friendlyId/:projectId', validZod(queryParamsValidator, 'params'), handleEditProject)
-// // delete project
-// router.delete('/:projectId', validZod(queryParamsValidator, 'params'), handleDeleteProject)
-// // like project
-// router.post('/like/:projectId', handleLikeProject)
-
+const projectMock = { ...getProjectTest(), title: 'mocked projec' } // if we need to change the title not all
 describe('CRUD operations on a project', () => {
+    // let token = ''
     beforeAll(async () => {
         await connect()
+        await Project.create(projectMock)
+        // here we could delete all liked projects in likes collection , something like this:
+        // await Like.deleteMany({ projectId: projectMock._id })
+        // login could be implemented here to get the token and pass it to the header bellow (.set('Authorization', `Bearer ${token}`))
+        // token = await login()
     })
     afterAll(async () => {
-        // await Project.deleteMany({})
+        // no need to delete all , we could delete the project by id
+        // await Project.deleteOne({ _id: projectMock._id })
+        await Project.deleteMany({})
         await shutdownServer()
     })
-    describe('projects/upload', () => {
+    describe('projects/fetch-all', () => {
+        test('fetch all projects', async () => {
+            const path = endPoints.project.all
+            const response = await request(mockedApp).get(path)
+            expect(response.status).toBe(200)
+            expect(response.body.result).toBe(true)
+            // const pArr = await Project.find({})
+            // const p = pArr[0]
+            // expect(pArr.length).toBe(1)
+            // expect(p._id.toString()).toBe(projectMock._id.toString())
+            // expect(p.title).toBe(projectMock.title)
+
+            // pArr.forEach((item, i) => {
+            //     expect(item._id.toString()).toBeDefined()
+            // })
+        })
+    })
+    describe('projects/uploads', () => {
         test('upload project', async () => {
             const path = endPoints.project.upload
-            const response = await request(app).post(path).send(projectTest)
-            console.log(response.body)
+            const response = await request(mockedApp).post(path).send(projectMock)
+            expect(response.status).toBe(200)
+            expect(response.body.result).toBe(true)
+        })
+    })
+    describe('projects/edit', () => {
+        test('edit project', async () => {
+            const path = `${endPoints.project.edit}?projectId=${projectMock._id}`
+            const response = await request(mockedApp).put(path).send(projectMock)
+            expect(response.status).toBe(200)
+            expect(response.body.result).toBe(true)
+        })
+    })
+    describe('projects/delete', () => {
+        test('delete project', async () => {
+            const path = `${endPoints.project.delete}?projectId=${projectMock._id}`
+            const response = await request(mockedApp).delete(path)
+            console.log(projectMock._id)
             expect(response.status).toBe(200)
             expect(response.body.result).toBe(true)
         })
     })
 })
-
 // describe('auth/register', () => {
 //     test('signup', async () => {
 //         const p = endPoints.user.auth.register
