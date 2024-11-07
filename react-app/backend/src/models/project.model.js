@@ -3,6 +3,7 @@ const { Schema, model } = mongoose
 
 const projectSchema = new Schema(
     {
+        _id: mongoose.Schema.Types.ObjectId,
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user',
@@ -21,10 +22,7 @@ const projectSchema = new Schema(
         },
         projectImage: [
             {
-                id: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    required: true,
-                },
+                _id: mongoose.Schema.Types.ObjectId,
                 url: {
                     type: String,
                     required: true,

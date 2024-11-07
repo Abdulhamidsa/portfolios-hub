@@ -1,10 +1,12 @@
 import { Project } from '../src/models/project.model.js'
 import AppError from '../utils/error.handler.js'
 import { Like } from '../src/models/likes.modal.js'
+import mongoose from 'mongoose'
 // upload project
 export const uploadProject = async (data) => {
     const { title, description, projectUrl, projectImage, userId, projectThumbnail, tags } = data
     const newProject = {
+        _id: new mongoose.Types.ObjectId(),
         userId,
         title,
         description,
@@ -50,41 +52,33 @@ export const fetchUserProjects = async (userId) => {
 
 // delete project
 export const deleteProject = async (data) => {
-    const { projectId } = data
+    const projectId = data
     try {
         const project = await Project.findByIdAndDelete(projectId)
         if (!project) {
-            throw { message: 'Project not found', status: 404 }
+            throw new AppError('Project not found', 404)
         }
         return { message: 'Project deleted successfully' }
     } catch (error) {
-        throw { message: error.message || 'An error occurred while deleting project', status: 500 }
+        throw new AppError(error.message || 'An error occurred while deleting the project', 500)
     }
 }
 // edit project
-export const editProject = async (req) => {
-    const { projectId } = req.params
-    const { title, description, projectUrl, imageUrl } = req.body
-    if (!title || !description || !projectUrl || !imageUrl) {
-        throw { message: 'All fields are required', status: 400 }
-    }
+export const editProject = async (data) => {
+    // object destructuring to get projectId and rest of the data
+    const { projectId, ...updateData } = data
     try {
-        const project = await Project.findById(projectId)
-        if (!project) {
-            throw { message: 'Project not found', status: 404 }
+        const updatedProject = await Project.findByIdAndUpdate(projectId, updateData, {
+            new: true,
+        })
+        if (!updatedProject) {
+            throw new AppError('Project not found', 404)
         }
-        project.title = title
-        project.description = description
-        project.projectUrl = projectUrl
-        project.projectImage = imageUrl
-        project.projectThumbnail = imageUrl
-        const updatedProject = await project.save()
         return updatedProject
     } catch (error) {
-        throw { message: error.message || 'An error occurred while updating project', status: 500 }
+        throw new AppError(error.message || 'An error occurred while updating the project', 500)
     }
 }
-
 // like project
 export const likeProject = async (data) => {
     const { projectId, userId } = data
